@@ -16,6 +16,7 @@ Shader "Hidden/SimpleRayMarchingShapes"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "./shaderUtils.cginc"
 
             struct appdata
             {
@@ -37,11 +38,12 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 return o;
             }
 
-            sampler2D _MainTex;
+            float3 cameraPosition;
+
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return fixed4(i.uv, 0., 1.);
+                return fixed4(remap_f2(i.uv, 0., 1., -1., 1.), 0., 1.);
             }
             ENDCG
         }
