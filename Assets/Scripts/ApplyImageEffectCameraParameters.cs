@@ -6,6 +6,7 @@ using UnityEngine;
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
     public Shader imageEffect;
+    public GameObject sphere;
     private Material material;
     private Camera camera;
 
@@ -19,7 +20,12 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
         };
 
         camera = Camera.main;
+        material.SetTexture("_MainTex", camera.targetTexture);
+        material.SetVector("_ObjectPosition", sphere.transform.position);
 
+    }
+
+    void Update(){
         if(camera != null){
             material.SetVector("_CameraPosition", camera.transform.localPosition);
             material.SetVector("_CameraOrientation", camera.transform.forward);
@@ -30,8 +36,10 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination){
+    
         if(material != null){
             Graphics.Blit(source, destination, material);
+
         }
         else{
             Graphics.Blit(source,destination);

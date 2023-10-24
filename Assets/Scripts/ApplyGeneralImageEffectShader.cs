@@ -16,6 +16,7 @@ public class ApplyGeneralImageEffectShader : MonoBehaviour
         {
             hideFlags = HideFlags.HideAndDontSave
         };
+        
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination){

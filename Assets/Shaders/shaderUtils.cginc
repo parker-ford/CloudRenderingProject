@@ -9,3 +9,4 @@ float2 remap_f2(float2 value,float in_min, float in_max, float out_min, float ou
         (value.y - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
     );
 }
+
