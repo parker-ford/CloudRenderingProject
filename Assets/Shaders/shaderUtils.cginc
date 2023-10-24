@@ -17,3 +17,9 @@ float tan_d(float deg){
     return tan(rad);
 }
 
+//TODO: Add source for this
+int pcgHash_i(int state){
+    int word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
+    return (word >> 22) ^ word;
+}
+
