@@ -118,13 +118,17 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 //Get ray
                 float3 ray = normalize(float3(uv.x, uv.y, 1.0));
 
-                //Translate Camera Position to world space;
+                //Transform Camera Position to world space;
                 float4 camOrigin = float4(0,0,0,1);
                 float4 camWorldHomog = mul(unity_CameraToWorld, camOrigin);
                 float3 camWorld = camWorldHomog.xyz / camWorldHomog.w;
 
+                //Transform ray to world space
+                float4 rayWorldHomog = mul(unity_CameraToWorld, float4(ray, 1.0));
+                float3 rayWorld = rayWorldHomog.xyz / rayWorldHomog.w;
+
                 //Get color of ray march
-                float4 c1 = rayMarch(camWorld, ray);
+                float4 c1 = rayMarch(camWorld, rayWorld);
 
                 //Get color from main camera
                 float4 c2 = tex2D(_MainTex, i.uv);
