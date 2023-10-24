@@ -170,7 +170,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102212346}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -289,7 +289,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -336,6 +336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageEffect: {fileID: 4800000, guid: 02d6392f29da485448de9710c3de9267, type: 3}
   sphere: {fileID: 102212346}
+  myLight: {fileID: 1984028042}
 --- !u!114 &246732544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,11 +344,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 246732539}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aa2b9865e704f7469814ba384421dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useMouse: 1
 --- !u!1 &1984028041
 GameObject:
   m_ObjectHideFlags: 0

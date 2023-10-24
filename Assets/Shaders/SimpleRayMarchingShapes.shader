@@ -92,7 +92,7 @@ Shader "Hidden/SimpleRayMarchingShapes"
             }
 
             float worldDistance(float3 p){
-                float sphere_0 = distanceFromSphere(p, _ObjectPosition, 0.5);
+                float sphere_0 = distanceFromSphere(p, _ObjectPosition, 1.);
                 //More shapes go here:
 
                 return sphere_0;
@@ -111,8 +111,8 @@ Shader "Hidden/SimpleRayMarchingShapes"
 
             float4 rayMarch(float3 p, float3 dir){
 
-                const int STEPS = 32;
-                const float MIN_HIT = 0.0001;
+                const int STEPS = 100;
+                const float MIN_HIT = 0.001;
                 const float MAX_DIST = 1000.;
 
                 float distanceTraveled = 0;
@@ -124,7 +124,8 @@ Shader "Hidden/SimpleRayMarchingShapes"
 
                     if(distanceToClosest <= MIN_HIT){
                         float3 normal = calculateNormal(currentSample);
-                        float3 col = float3(1., 1., 1.) * dot(normal, _LightDirection);
+                        float3 col = float3(1., 1., 1.) * clamp(dot(normal, _LightDirection), 0., 1.);
+                        col += float3(1., 1., 1.) * 0.5;
                         return float4(col, 1.);
                     }
 
