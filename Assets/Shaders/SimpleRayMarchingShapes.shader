@@ -51,6 +51,8 @@ Shader "Hidden/SimpleRayMarchingShapes"
             
             float3 _ObjectPosition;
 
+            float3 _LightDirection;
+
             sampler2D _MainTex;
 
             float3 getCameraOriginInWorld(){
@@ -89,11 +91,22 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 return length(c - p) - r;
             }
 
-            float worldMap(float3 p){
+            float worldDistance(float3 p){
                 float sphere_0 = distanceFromSphere(p, _ObjectPosition, 0.5);
                 //More shapes go here:
 
                 return sphere_0;
+            }
+
+            float3 calculateNormal(float3 p){
+                const float GRADIENT_STEP_SIZE = 0.001;
+                float3 gradientStep = float3(GRADIENT_STEP_SIZE, 0.0, 0.0);
+
+                float gradientX = worldDistance(p + gradientStep.xyy) - worldDistance(p - gradientStep.xyy);
+                float gradientY = worldDistance(p + gradientStep.yxy) - worldDistance(p - gradientStep.yxy);
+                float gradientZ = worldDistance(p + gradientStep.yyx) - worldDistance(p - gradientStep.yyx);
+
+                return normalize(float3(gradientX, gradientY, gradientZ));
             }
 
             float4 rayMarch(float3 p, float3 dir){
@@ -107,10 +120,12 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 for(int i = 0; i < STEPS; i++){
                     float3 currentSample = p + distanceTraveled * dir;
 
-                    float distanceToClosest = worldMap(currentSample);
+                    float distanceToClosest = worldDistance(currentSample);
 
                     if(distanceToClosest <= MIN_HIT){
-                        return float4(1., 0., 0., 1.);
+                        float3 normal = calculateNormal(currentSample);
+                        float3 col = float3(1., 1., 1.) * dot(normal, _LightDirection);
+                        return float4(col, 1.);
                     }
 
                     if(distanceTraveled >= MAX_DIST){

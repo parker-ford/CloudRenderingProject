@@ -7,6 +7,7 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
     public Shader imageEffect;
     public GameObject sphere;
+    public Light myLight;
     private Material material;
     private Camera myCamera;
 
@@ -22,6 +23,7 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
         myCamera = Camera.main;
         material.SetTexture("_MainTex", myCamera.targetTexture);
         material.SetVector("_ObjectPosition", sphere.transform.position);
+        material.SetVector("_LightDirection", -myLight.transform.forward.normalized);
     }
 
     void Update(){
