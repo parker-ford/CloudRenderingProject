@@ -85,9 +85,15 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 return rayWorld;
             }
 
-
             float distanceFromSphere(float3 p, float3 c, float r){
                 return length(c - p) - r;
+            }
+
+            float worldMap(float3 p){
+                float sphere_0 = distanceFromSphere(p, _ObjectPosition, 0.5);
+                //More shapes go here:
+
+                return sphere_0;
             }
 
             float4 rayMarch(float3 p, float3 dir){
@@ -101,9 +107,9 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 for(int i = 0; i < STEPS; i++){
                     float3 currentSample = p + distanceTraveled * dir;
 
-                    float distnaceToClosest = distanceFromSphere(currentSample, _ObjectPosition, 0.5);
+                    float distanceToClosest = worldMap(currentSample);
 
-                    if(distnaceToClosest <= MIN_HIT){
+                    if(distanceToClosest <= MIN_HIT){
                         return float4(1., 0., 0., 1.);
                     }
 
@@ -111,13 +117,14 @@ Shader "Hidden/SimpleRayMarchingShapes"
                         break;
                     }
 
-                    distanceTraveled += distnaceToClosest;
+                    distanceTraveled += distanceToClosest;
 
                 }
 
                 return float4(0., 0., 0., 0.);
 
             }
+
 
             fixed4 frag (v2f i) : SV_Target
             {
