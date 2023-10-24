@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
+    public float aspect;
+    public float fov;
+    public float near;
     public Shader imageEffect;
     public GameObject sphere;
     private Material material;
@@ -23,6 +26,11 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
         material.SetTexture("_MainTex", camera.targetTexture);
         material.SetVector("_ObjectPosition", sphere.transform.position);
 
+        aspect = camera.aspect;
+        fov = camera.fieldOfView;
+        near = camera.nearClipPlane;
+
+
     }
 
     void Update(){
@@ -32,6 +40,12 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
             material.SetFloat("_CameraFOV", camera.fieldOfView);
             material.SetFloat("_CameraAspect", camera.aspect);
             material.SetFloat("_CameraNearPlane", camera.nearClipPlane);
+
+            // material.SetVector("_CameraPosition", camera.transform.localPosition);
+            // material.SetVector("_CameraOrientation", camera.transform.forward);
+            // material.SetFloat("_CameraFOV", fov);
+            // material.SetFloat("_CameraAspect", aspect);
+            // material.SetFloat("_CameraNearPlane", near);
         }
     }
 

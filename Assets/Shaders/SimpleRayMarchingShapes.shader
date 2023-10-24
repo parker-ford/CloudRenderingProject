@@ -19,8 +19,6 @@ Shader "Hidden/SimpleRayMarchingShapes"
             #include "UnityCG.cginc"
             #include "./shaderUtils.cginc"
 
-            #define PI 3.14159265359
-
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -73,7 +71,7 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 for(int i = 0; i < STEPS; i++){
                     float3 currentSample = p + distanceTraveled * dir;
 
-                    float distnaceToClosest = distanceFromSphere(currentSample, _ObjectPosition, 1.);
+                    float distnaceToClosest = distanceFromSphere(currentSample, _ObjectPosition, 0.5);
 
                     if(distnaceToClosest <= MIN_HIT){
                         return float4(1., 0., 0., 1.);
@@ -93,12 +91,43 @@ Shader "Hidden/SimpleRayMarchingShapes"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                //Original NDC space uv (0-1)
+                float2 uv = i.uv;
+                //return fixed4(uv, 0, 1);
 
-                float imageHeight = 2. * (tan(_CameraFOV * (PI / 180.)) * _CameraNearPlane);
-                float imageWidth = _CameraAspect * imageHeight;
-                float3 pixelDir = getPixelRayDir(remap_f2(i.uv, 0., 1., -1., 1.), imageHeight, imageWidth);
-                float4 result = rayMarch(_CameraPosition, pixelDir);
-                return lerp(tex2D(_MainTex, i.uv), result, result.a);
+                //Shift uv to center of pixel
+                //uv = float2(uv.x + (1. / _ScreenParams.x), uv.y - (1. / _ScreenParams.y));
+
+
+                //Convert to screen space uv (-1 - 1)
+                uv = remap_f2(uv, 0, 1, -1, 1);
+                //return fixed4(uv,  0, 1);
+
+                //account for aspect ratio
+                uv = float2(uv.x * _CameraAspect, uv.y);
+                //return fixed4(uv, 0, 1);
+
+                //acount for FOV
+                uv = float2(uv.x, uv.y * tan_d(_CameraFOV / 2.0)); // <- Assumes that angle hasn't already be divided by 2 and the distance from image plane to camera is 1
+                //return fixed4(uv, 0, 1);
+                
+                //Get ray
+                float3 ray = normalize(float3(uv.x, uv.y, 1.0));
+
+                //Get color of ray march
+                float4 c1 = rayMarch(float3(0,0,0), ray);
+
+                //Get color from main camera
+                float4 c2 = tex2D(_MainTex, i.uv);
+
+                return lerp(c2, c1, c1.a);
+
+                // float imageHeight = 2. * (tan(_CameraFOV * (PI / 180.)) * _CameraNearPlane);
+                // float imageWidth = _CameraAspect * imageHeight;
+                // float3 pixelDir = getPixelRayDir(remap_f2(i.uv, 0., 1., -1., 1.), imageHeight, imageWidth);
+                // float4 result = rayMarch(_CameraPosition, pixelDir);
+                // return lerp(tex2D(_MainTex, i.uv), result, result.a);
+
                 // return rayMarch  tex2D(_MainTex, i.uv);
             }
 
