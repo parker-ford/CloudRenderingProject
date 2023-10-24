@@ -1,3 +1,6 @@
+// Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
+// Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
+
 Shader "Hidden/SimpleRayMarchingShapes"
 {
     Properties
@@ -44,6 +47,7 @@ Shader "Hidden/SimpleRayMarchingShapes"
             float _CameraFOV;
             float _CameraAspect;
             float _CameraNearPlane;
+            // float4x4 _CameraToWorld;
             
             float3 _ObjectPosition;
 
@@ -114,8 +118,13 @@ Shader "Hidden/SimpleRayMarchingShapes"
                 //Get ray
                 float3 ray = normalize(float3(uv.x, uv.y, 1.0));
 
+                //Translate Camera Position to world space;
+                float4 camOrigin = float4(0,0,0,1);
+                float4 camWorldHomog = mul(unity_CameraToWorld, camOrigin);
+                float3 camWorld = camWorldHomog.xyz / camWorldHomog.w;
+
                 //Get color of ray march
-                float4 c1 = rayMarch(float3(0,0,0), ray);
+                float4 c1 = rayMarch(camWorld, ray);
 
                 //Get color from main camera
                 float4 c2 = tex2D(_MainTex, i.uv);

@@ -12,7 +12,8 @@ public class CameraController : MonoBehaviour {
     shift : Makes camera accelerate
     space : Moves camera on X and Z axis only.  So camera doesn't gain any height*/
      
-     
+    public bool useMouse;
+
     float mainSpeed = 10.0f; //regular speed
     float shiftAdd = 250.0f; //multiplied by how long shift is held.  Basically running
     float maxShift = 100.0f; //Maximum speed when holdin gshift
@@ -21,15 +22,16 @@ public class CameraController : MonoBehaviour {
     private float totalRun= 1.0f;
      
     void Update () {
-        lastMouse = Input.mousePosition - lastMouse ;
-        lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
-        lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x , transform.eulerAngles.y + lastMouse.y, 0);
-        transform.eulerAngles = lastMouse;
-        lastMouse =  Input.mousePosition;
+        if(useMouse){
+            lastMouse = Input.mousePosition - lastMouse ;
+            lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
+            lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x , transform.eulerAngles.y + lastMouse.y, 0);
+            transform.eulerAngles = lastMouse;
+            lastMouse =  Input.mousePosition;
+        }
         //Mouse  camera angle done.  
        
         //Keyboard commands
-        float f = 0.0f;
         Vector3 p = GetBaseInput();
         if (p.sqrMagnitude > 0){ // only move while a direction key is pressed
           if (Input.GetKey (KeyCode.LeftShift)){

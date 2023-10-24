@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
-    public float aspect;
-    public float fov;
-    public float near;
     public Shader imageEffect;
     public GameObject sphere;
     private Material material;
-    private Camera camera;
+    private Camera myCamera;
 
     void Start()
     {
@@ -22,30 +19,18 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
             hideFlags = HideFlags.HideAndDontSave
         };
 
-        camera = Camera.main;
-        material.SetTexture("_MainTex", camera.targetTexture);
+        myCamera = Camera.main;
+        material.SetTexture("_MainTex", myCamera.targetTexture);
         material.SetVector("_ObjectPosition", sphere.transform.position);
-
-        aspect = camera.aspect;
-        fov = camera.fieldOfView;
-        near = camera.nearClipPlane;
-
-
     }
 
     void Update(){
-        if(camera != null){
-            material.SetVector("_CameraPosition", camera.transform.localPosition);
-            material.SetVector("_CameraOrientation", camera.transform.forward);
-            material.SetFloat("_CameraFOV", camera.fieldOfView);
-            material.SetFloat("_CameraAspect", camera.aspect);
-            material.SetFloat("_CameraNearPlane", camera.nearClipPlane);
-
-            // material.SetVector("_CameraPosition", camera.transform.localPosition);
-            // material.SetVector("_CameraOrientation", camera.transform.forward);
-            // material.SetFloat("_CameraFOV", fov);
-            // material.SetFloat("_CameraAspect", aspect);
-            // material.SetFloat("_CameraNearPlane", near);
+        if(myCamera != null){
+            material.SetVector("_CameraPosition", myCamera.transform.localPosition);
+            material.SetVector("_CameraOrientation", myCamera.transform.forward);
+            material.SetFloat("_CameraFOV", myCamera.fieldOfView);
+            material.SetFloat("_CameraAspect", myCamera.aspect);
+            material.SetFloat("_CameraNearPlane", myCamera.nearClipPlane);
         }
     }
 
