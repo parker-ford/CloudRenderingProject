@@ -44,7 +44,10 @@ Shader "Hidden/CloudCoverage"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float noise = perlinNoise(i.uv, 10.);
+                // float2 noise  = perlinNoise(i.uv, 4.);
+                // return fixed4(noise, 0.0, 1.0);
+
+                float noise = perlinNoise(i.uv, 4.);
                 noise = (noise + 1.0) / 2.0;
                 return fixed4(noise, noise, noise, 1.0);
             }

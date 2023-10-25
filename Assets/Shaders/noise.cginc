@@ -16,6 +16,14 @@ int seedGen_i2(int2 input){
     return seed1 + seed2;
 }
 
+float2 map_f2(float2 v, float cellSize){
+    float i = 1.0 / cellSize;
+    float2 _v = float2(0,0);
+    _v.x = remap_f(v.x, 0.0, i, 0.0, 1.0);
+    _v.y = remap_f(v.y, 0.0, i, 0.0, 1.0);
+    return _v;
+}
+
 
 float2 gradientVector(float2 input){
 
@@ -31,7 +39,7 @@ float2 gradientVector(float2 input){
         float2(-1.0, 0.0),
     };
 
-    int seed = seedGen_i2(input);
+    int seed = seedGen_i2(int2(input.x * _ScreenParams.x, input.y * _ScreenParams.y));
     int r = pcgHash_i(seed);
     r = pcgHash_i(r);
     float2 v = vectors[r & 7];
@@ -55,13 +63,13 @@ float perlinNoise(float2 p, float cellSize) {
     float2 tl = float2(id.x, id.y);
     float2 tr = float2(id.x + i, id.y);
     float2 bl = float2(id.x, id.y + i);
-    float2 br = float2(id.x + i, id.y + i); 
+    float2 br = float2(id.x + i, id.y + i);
 
     //Vector from corners of cell to point
-    float v_tl = remap_f2(float2(p.x - id.x, p.y - id.y), 0.0, i, 0.0, 1.0);
-    float v_tr = remap_f2(float2(p.x - id.x - i, p.y - id.y), 0.0, i, 0.0, 1.0);
-    float v_bl = remap_f2(float2(p.x - id.x, p.y - id.y - i), 0.0, i, 0.0, 1.0);
-    float v_br = remap_f2(float2(p.x - id.x - i, p.y - id.y - i), 0.0, i, 0.0, 1.0);
+    float2 v_tl = remap_f2(float2(p.x - id.x, p.y - id.y), 0.0, i, 0.0, 1.0);
+    float2 v_tr = remap_f2(float2(p.x - id.x - i, p.y - id.y), 0.0, i, 0.0, 1.0);
+    float2 v_bl = remap_f2(float2(p.x - id.x, p.y - id.y - i), 0.0, i, 0.0, 1.0);
+    float2 v_br = remap_f2(float2(p.x - id.x - i, p.y - id.y - i), 0.0, i, 0.0, 1.0);
 
     //Gradient vectors at each cell corner
     float2 gv_tl = gradientVector(tl);
