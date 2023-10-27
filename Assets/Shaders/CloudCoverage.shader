@@ -1,4 +1,4 @@
-Shader "Hidden/CloudCoverage"
+Shader "Parker/CloudCoverage"
 {
     Properties
     {
@@ -48,7 +48,7 @@ Shader "Hidden/CloudCoverage"
                 noise += perlinNoise(i.uv, 8.) * 0.6;
                 noise += perlinNoise(i.uv, 15) * 0.3;
                 noise += perlinNoise(i.uv, 20) * 0.1;
-                //noise = (noise + 1.0) / 2.0;
+                // noise = (noise + 1.0) / 2.0;
                 
                 return fixed4(noise, noise, noise, 1.0);
             }
