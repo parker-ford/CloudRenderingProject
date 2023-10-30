@@ -1,7 +1,7 @@
 // Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
 // Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
 
-Shader "Hidden/SimpleRayMarchingShapes"
+Shader "Parker/SimpleRayMarchingShapes"
 {
     Properties
     {

@@ -45,14 +45,18 @@ Shader "Parker/CloudCoverage"
             float _NodeWeight1;
             float _NodeWeight2;
             float _NodeWeight3;
+            float _ZSlice;
 
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float noise = 0;
-                noise += perlinNoise(i.uv, _NodeSize1) * _NodeWeight1;
-                noise += perlinNoise(i.uv, _NodeSize2) * _NodeWeight2;
-                noise += perlinNoise(i.uv, _NodeSize3) * _NodeWeight3;
+                // noise += perlinNoise_2D(i.uv, _NodeSize1) * _NodeWeight1;
+                // noise += perlinNoise_2D(i.uv, _NodeSize2) * _NodeWeight2;
+                // noise += perlinNoise_2D(i.uv, _NodeSize3) * _NodeWeight3;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize1) * _NodeWeight1;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize2) * _NodeWeight2;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize3) * _NodeWeight3;
                 // noise = (noise + 1.0) / 2.0;
                 
                 return fixed4(noise, noise, noise, 1.0);

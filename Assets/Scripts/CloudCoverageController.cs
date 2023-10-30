@@ -17,9 +17,15 @@ public class CloudCoverageController : MonoBehaviour
     public float nodeWeight2 = 0.3f;
     [Range(0.01f, 1f)]
     public float nodeWeight3 = 0.1f;
+
+    public bool animate = false;
+    [Range(0.001f, 1f)]
+    public float animateSpeed = 0.2f;
+    private float elapsedTime = 0f;
     void Start()
     {
         Debug.Assert(cloudCoverageMat != null);
+
     }
 
     void Update()
@@ -33,5 +39,11 @@ public class CloudCoverageController : MonoBehaviour
         cloudCoverageMat.SetFloat("_NodeWeight1", nodeWeight1 / weightTotal);
         cloudCoverageMat.SetFloat("_NodeWeight2", nodeWeight2 / weightTotal);
         cloudCoverageMat.SetFloat("_NodeWeight3", nodeWeight3 / weightTotal);
+
+        if(animate){
+            elapsedTime += (Time.deltaTime * animateSpeed);
+        }
+
+        cloudCoverageMat.SetFloat("_ZSlice", elapsedTime);
     }
 }
