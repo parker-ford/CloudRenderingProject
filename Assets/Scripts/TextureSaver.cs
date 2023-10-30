@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CloudCoverageController : MonoBehaviour
-{
+public class TextureSaver : MonoBehaviour {
+
     public Shader imageEffect;
+    public string textureName;
     private Material material;
     private RenderTexture currentTexture;
+    private int finalTextureSize = 512;
 
     void Start()
     {
@@ -26,17 +28,11 @@ public class CloudCoverageController : MonoBehaviour
         if(material != null){
             Graphics.Blit(source, destination, material);
             Graphics.Blit(destination, currentTexture);
-            // if(currentTexture != null){
-            //     Debug.Log("currentTexture is not null");
-            // }
-            // else{
-            //     Debug.Log("currentTexture is null");
-            // }
         }
         else{
             Graphics.Blit(source,destination);
             Debug.LogError("Image effect material is null");
-        }
+        }//
     }
 
     public void SaveCurrentTexture(){
@@ -47,15 +43,22 @@ public class CloudCoverageController : MonoBehaviour
             texture2D.ReadPixels(new Rect(0, 0, currentTexture.width, currentTexture.height), 0, 0);
             texture2D.Apply();
 
-            byte[] bytes = texture2D.EncodeToPNG();
-            System.IO.File.WriteAllBytes(Application.dataPath + "/CloudCoverage.png", bytes);
+            Texture2D finalTexture = new Texture2D(finalTextureSize, finalTextureSize, TextureFormat.RGBA32, false);
+            for(int y = 0; y < finalTexture.height; y++){
+                for(int x = 0; x < finalTexture.width; x++){
+                    Color color = texture2D.GetPixelBilinear((float)x / finalTexture.width, (float)y / finalTexture.height);
+                    finalTexture.SetPixel(x,y,color);
+                }
+            }
+            finalTexture.Apply();
+
+            byte[] bytes = finalTexture.EncodeToPNG();
+            System.IO.File.WriteAllBytes(Application.dataPath + "/Textures/" + textureName + ".png", bytes);
             Debug.Log("Saved current Texture");
 
         } 
         else{
-            Debug.Log("test");
+            Debug.LogError("Current Texture is null");
         }
     }
-
-
 }

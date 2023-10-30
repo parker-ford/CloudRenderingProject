@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(CloudCoverageController))]
-public class SaveTexture : Editor
+[CustomEditor(typeof(TextureSaver))]
+public class TextureSaverEditor : Editor
 {
     public override void OnInspectorGUI(){
         DrawDefaultInspector();
         
-        CloudCoverageController cloudCoverageController = (CloudCoverageController) target;
+        TextureSaver cloudCoverageController = (TextureSaver) target;
         if(GUILayout.Button("Save Texture")){
             cloudCoverageController.SaveCurrentTexture();
         }
