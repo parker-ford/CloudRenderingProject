@@ -39,15 +39,20 @@ Shader "Parker/CloudCoverage"
             }
 
             sampler2D _MainTex;
-
+            float _NodeSize1;
+            float _NodeSize2;
+            float _NodeSize3;
+            float _NodeWeight1;
+            float _NodeWeight2;
+            float _NodeWeight3;
 
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float noise = 0;
-                noise += perlinNoise(i.uv, 8.) * 0.6;
-                noise += perlinNoise(i.uv, 15) * 0.3;
-                noise += perlinNoise(i.uv, 20) * 0.1;
+                noise += perlinNoise(i.uv, _NodeSize1) * _NodeWeight1;
+                noise += perlinNoise(i.uv, _NodeSize2) * _NodeWeight2;
+                noise += perlinNoise(i.uv, _NodeSize3) * _NodeWeight3;
                 // noise = (noise + 1.0) / 2.0;
                 
                 return fixed4(noise, noise, noise, 1.0);

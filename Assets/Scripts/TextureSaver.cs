@@ -4,29 +4,21 @@ using UnityEngine;
 
 public class TextureSaver : MonoBehaviour {
 
-    public Shader imageEffect;
     public string textureName;
-    private Material material;
+    public Material imageEffect;
     private RenderTexture currentTexture;
     private int finalTextureSize = 512;
 
     void Start()
     {
-        Debug.Assert(imageEffect != null);
-
-        material = new Material(imageEffect)
-        {
-            hideFlags = HideFlags.HideAndDontSave
-        };
-        Debug.Log(Screen.width + " " + Screen.height);
         currentTexture =  new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         currentTexture.Create();
         
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination){
-        if(material != null){
-            Graphics.Blit(source, destination, material);
+        if(imageEffect != null){
+            Graphics.Blit(source, destination, imageEffect);
             Graphics.Blit(destination, currentTexture);
         }
         else{
