@@ -8,7 +8,7 @@ Shader "Parker/SimpleRayMarchingShapes"
 
     }
     SubShader
-    {
+    { 
 
         // Blend SrcAlpha OneMinusSrcAlpha
         // ZWrite Off

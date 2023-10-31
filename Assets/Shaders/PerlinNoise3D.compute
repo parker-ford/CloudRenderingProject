@@ -1,0 +1,20 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture3D<float4> Result;
+float4 _ScreenParams;
+
+
+#include "noise.cginc"
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: assumes that _screenParams is constant on all axis
+    float3 uv = float3((float)id.x / _ScreenParams.x, (float)id.y / _ScreenParams.x, (float)id.z / _ScreenParams.x);
+    float noise = perlinNoise_3D(uv, 8.0);
+    // Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    Result[id] = float4(noise, noise, noise, 1.0);
+}
