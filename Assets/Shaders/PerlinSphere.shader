@@ -99,7 +99,7 @@ Shader "Parker/PerlinSphere"
                     for(int j = 0; j < steps; j++){
                         float currDist = (float)j/dist;
                         float3 pos = o + dir * (t.x + currDist);
-                        noiseSum += tex3D(_Perlin3DTexture, pos * _Perlin3DTexture_ST.x); * weight
+                        noiseSum += tex3D(_Perlin3DTexture, pos * _Perlin3DTexture_ST.x) * weight;
                     }
 
                     float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), noiseSum);
