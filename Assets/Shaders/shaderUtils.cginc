@@ -1,3 +1,6 @@
+#ifndef _SHADERUTILS_CGINC_
+#define _SHADERUTILS_CGINC
+
 
 #define PI 3.14159265359
 
@@ -34,4 +37,6 @@ int pcgHash_i(int state){
 float fract(float input){
     return input - floor(input);
 }
+
+#endif
 

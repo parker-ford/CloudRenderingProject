@@ -22,17 +22,16 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
 
         myCamera = Camera.main;
         material.SetTexture("_MainTex", myCamera.targetTexture);
-        material.SetVector("_ObjectPosition", sphere.transform.position);
-        material.SetVector("_LightDirection", -myLight.transform.forward.normalized);
+
     }
 
     void Update(){
         if(myCamera != null){
-            material.SetVector("_CameraPosition", myCamera.transform.localPosition);
-            material.SetVector("_CameraOrientation", myCamera.transform.forward);
             material.SetFloat("_CameraFOV", myCamera.fieldOfView);
             material.SetFloat("_CameraAspect", myCamera.aspect);
-            material.SetFloat("_CameraNearPlane", myCamera.nearClipPlane);
+            material.SetVector("_SpherePosition", sphere.transform.position);
+            material.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2f);
+            material.SetVector("_LightDirection", -myLight.transform.forward.normalized);
         }
     }
 

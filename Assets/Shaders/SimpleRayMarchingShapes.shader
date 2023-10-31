@@ -49,7 +49,7 @@ Shader "Parker/SimpleRayMarchingShapes"
             float _CameraNearPlane;
             // float4x4 _CameraToWorld;
             
-            float3 _ObjectPosition;
+            float3 _SpherePosition;
 
             float3 _LightDirection;
 
@@ -92,7 +92,7 @@ Shader "Parker/SimpleRayMarchingShapes"
             }
 
             float worldDistance(float3 p){
-                float sphere_0 = distanceFromSphere(p, _ObjectPosition, 1.);
+                float sphere_0 = distanceFromSphere(p, _SpherePosition, 1.);
                 //More shapes go here:
 
                 return sphere_0;
