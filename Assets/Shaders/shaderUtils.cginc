@@ -1,5 +1,5 @@
 #ifndef _SHADERUTILS_CGINC_
-#define _SHADERUTILS_CGINC
+#define _SHADERUTILS_CGINC_
 
 
 #define PI 3.14159265359

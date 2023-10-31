@@ -21,6 +21,7 @@ Shader "Parker/SimpleRayMarchingShapes"
 
             #include "UnityCG.cginc"
             #include "./shaderUtils.cginc"
+            #include "./ray.cginc"
 
             struct appdata
             {
@@ -41,58 +42,20 @@ Shader "Parker/SimpleRayMarchingShapes"
                 o.uv = v.uv;
                 return o;
             }
-
-            float3 _CameraPosition;
-            float3 _CameraOrientation;
-            float _CameraFOV;
-            float _CameraAspect;
-            float _CameraNearPlane;
-            // float4x4 _CameraToWorld;
             
             float3 _SpherePosition;
+            float _SphereRadius;
 
             float3 _LightDirection;
 
             sampler2D _MainTex;
-
-            float3 getCameraOriginInWorld(){
-                //Transform Camera Position to world space;
-                float3 camOrigin = float3(0,0,0);
-                float4 camWorldHomog = mul(unity_CameraToWorld, float4(camOrigin, 1.0));
-                float3 camWorld = camWorldHomog.xyz / camWorldHomog.w;
-                return camWorld;
-            }
-
-            float3 getPixelRayInWorld(float2 uv){
-
-                //TODO: Shift uv to center of pixel
-                //uv = float2(uv.x + (1. / _ScreenParams.x), uv.y - (1. / _ScreenParams.y));
-
-                //Convert to screen space uv (-1 - 1)
-                uv = remap_f2(uv, 0, 1, -1, 1);
-
-                //Account for aspect ratio
-                uv = float2(uv.x * _CameraAspect, uv.y);
-
-                //Acount for FOV
-                uv = float2(uv.x, uv.y * tan_d(_CameraFOV / 2.0));
-                
-                //Get ray
-                float3 ray = normalize(float3(uv.x, uv.y, 1.0));
-
-                //Transform ray to world space
-                float4 rayWorldHomog = mul(unity_CameraToWorld, float4(ray, 0.0));
-                float3 rayWorld = normalize(rayWorldHomog.xyz);
-
-                return rayWorld;
-            }
 
             float distanceFromSphere(float3 p, float3 c, float r){
                 return length(c - p) - r;
             }
 
             float worldDistance(float3 p){
-                float sphere_0 = distanceFromSphere(p, _SpherePosition, 1.);
+                float sphere_0 = distanceFromSphere(p, _SpherePosition, _SphereRadius);
                 //More shapes go here:
 
                 return sphere_0;
