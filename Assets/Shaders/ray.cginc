@@ -11,11 +11,9 @@ float3 getPixelRayInWorld(float2 uv){
     //Convert to screen space uv (-1 - 1)
     uv = remap_f2(uv, 0, 1, -1, 1);
 
-    //Account for aspect ratio
-    uv = float2(uv.x * _CameraAspect, uv.y);
-
-    //Acount for FOV
-    uv = float2(uv.x, uv.y * tan_d(_CameraFOV / 2.0));
+    //Account for aspect ratio and FOV
+    uv *= tan_d(_CameraFOV * 0.5);
+    uv.x *= _CameraAspect;
 
     //Get ray
     float3 ray = normalize(float3(uv.x, uv.y, 1.0));

@@ -58,12 +58,12 @@ Shader "Parker/PerlinSphere"
                 // if b^2 is == 0, one solution, tangent
                 // else there are no solutions
 
-                float3 L = o - _SpherePosition;
-                float a = 1; //assuming that dir is normalized, should be dot(dir, dir);
-                float b = 2 * dot(dir, L);
+                float3 L = _SpherePosition - o;
+                float a = 1.0f; //assuming that dir is normalized, should be dot(dir, dir);
+                float b = 2.0f * dot(dir, L);
                 float c = dot(L,L) - (_SphereRadius * _SphereRadius);
-                float discrim = b * b - 4 * a * c;
-                float test = discrim < 0 ? 0.0 : 1.0;
+                float discrim = b * b - 4.0f * a * c;
+                float test = discrim < 0.0f ? 0.0f : 1.0f;
                 // //if(discrim > 0){
                 //     float q = (b > 0) ? -0.5 * (b + sqrt(discrim)) : -0.5 * (b - sqrt(discrim));
 
@@ -83,8 +83,10 @@ Shader "Parker/PerlinSphere"
                 // else{
                 //     t = min(x0, x1);
                 // }
-                float3 col = float3(1,0,0);
-                return fixed4(col * test, 1.0);
+
+                float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0) * test, 0.5f);
+                // return fixed4(_CameraFOV - 60.0, 0, 0, 1.0);
+                return fixed4(col, 1.0);
             }
             ENDCG
         }
