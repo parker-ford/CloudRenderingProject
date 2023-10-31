@@ -73,7 +73,7 @@ Shader "Parker/PerlinSphere"
                     float2 t = float2(0,0);
 
                     if(x0 < 0 && x1 < 0){
-                        //Both distances are negative, meaning the the sphere is behind us
+                        //Both distances are negative, meaning the the sphere is behind us... ignoring this case for now
                     }
                     else if(x1 < 0){
                         // Only one direction is behind us
@@ -86,57 +86,29 @@ Shader "Parker/PerlinSphere"
                         t.y = x1;
                     }
                     else{
+                        //Both distances are in the forward direction
                         t.x = min(x0, x1);
                         t.y = max(x0, x1);
                     }
 
-                    float3 uvw = float3(i.uv.x * _Perlin3DTexture_ST.x, i.uv.y * _Perlin3DTexture_ST.y, 0.1);
-                    //return tex3D(_Perlin3DTexture, uvw);
 
                     float dist = (t.y - t.x);
-
                     float noiseSum = 0.0;
                     int steps = 10;
                     float weight = 1.0 / (float)steps;
                     for(int j = 0; j < steps; j++){
                         float currDist = (float)j/dist;
                         float3 pos = o + dir * (t.x + currDist);
-
-                        noiseSum += tex3D(_Perlin3DTexture, pos) * weight;
+                        noiseSum += tex3D(_Perlin3DTexture, pos * _Perlin3DTexture_ST.x); * weight
                     }
 
                     float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), noiseSum);
                     return fixed4(col, 1);
-
-                    // float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), dist);
-                    // return fixed4(col, 1.0);
-
-                    // return fixed4(col, tex3D(_Perlin3DTexture, float3(i.uv, 0.0f)).r);
                 }
                 else{
                     float3 col = lerp(tex2D(_MainTex, i.uv), float3(0,0,0), 0.5f);
                     return fixed4(col, 1.0);
                 }
-
-                // //if(discrim > 0){
-                //     float q = (b > 0) ? -0.5 * (b + sqrt(discrim)) : -0.5 * (b - sqrt(discrim));
-
-                // //}
-                // float x0 = q / a;
-                // float x1 = c / q;
-                // float t = 0;
-                // if(x0 < 0 && x1 < 0){
-                //     t = 0;
-                // }
-                // else if(x1 < 0){
-                //     t = x0;
-                // }
-                // else if(x0 < 0){
-                //     t = x1;
-                // }
-                // else{
-                //     t = min(x0, x1);
-                // }
             }
             ENDCG
         }
