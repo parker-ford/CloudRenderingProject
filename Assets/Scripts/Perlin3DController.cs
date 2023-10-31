@@ -7,6 +7,7 @@ public class Perlin3DController : MonoBehaviour
 {
     public ComputeShader computeShader;
     public int textureSize = 64;
+    public int cellSize;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +26,7 @@ public class Perlin3DController : MonoBehaviour
             {
                 for (int z = 0; z < textureSize; z++)
                 {
-                    float noise = Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, 6, textureSize);
+                    float noise = Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize, textureSize);
                     noise = (noise + 1) / 2f;
                     //Debug.Log(noise);
                     Color color = new Color(noise, noise, noise, 1);

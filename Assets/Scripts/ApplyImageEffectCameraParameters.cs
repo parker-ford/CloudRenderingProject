@@ -5,20 +5,14 @@ using UnityEngine;
 
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
-    public Shader imageEffect;
+    public Material material;
     public GameObject sphere;
     public Light myLight;
-    private Material material;
     private Camera myCamera;
 
     void Start()
     {
-        Debug.Assert(imageEffect != null);
-
-        material = new Material(imageEffect)
-        {
-            hideFlags = HideFlags.HideAndDontSave
-        };
+        Debug.Assert(material != null);
 
         myCamera = Camera.main;
         material.SetTexture("_MainTex", myCamera.targetTexture);

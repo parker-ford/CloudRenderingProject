@@ -3,6 +3,7 @@ Shader "Parker/PerlinSphere"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Perlin3DTexture ("Perlin 3D Texture", 3D) = "" {}
     }
     SubShader
     {
@@ -39,31 +40,84 @@ Shader "Parker/PerlinSphere"
             }
 
             sampler2D _MainTex;
+            sampler3D _Perlin3DTexture;
+            float4 _Perlin3DTexture_ST;
             float3 _SpherePosition;
             float _SphereRadius;
 
             fixed4 frag (v2f i) : SV_Target
             {
+                //Get ray origin and direction
                 float3 dir = getPixelRayInWorld(i.uv);
                 float3 o = getCameraOriginInWorld();
-                //ray equation {p = o + dt}
-                //sphere equation {(p-c)^2 = r^2}
-                //plug in {((o + dt) - c)^2 = r^2}
-                //rearrange {(d*d)t^2 + 2(d(o-c))t + (o - c)(o - c)-r^2 = 0 }
-                //a = d*d
-                //b = 2d * (o-c)
-                //c = (o-c)^2 - r^2
-                //t = (-b+-sqrt(b^2-4ac)) / 2a
-                //if b^2 is > 0 there are two real solution
-                // if b^2 is == 0, one solution, tangent
-                // else there are no solutions
 
-                float3 L = _SpherePosition - o;
+                
+                //Ray origin to sphere center
+                float3 L = o - _SpherePosition;
+
+                //Calculating a,b,c for quadratic formula
                 float a = 1.0f; //assuming that dir is normalized, should be dot(dir, dir);
                 float b = 2.0f * dot(dir, L);
                 float c = dot(L,L) - (_SphereRadius * _SphereRadius);
+
+                //Calculating discriminant
                 float discrim = b * b - 4.0f * a * c;
-                float test = discrim < 0.0f ? 0.0f : 1.0f;
+
+                //If discriminant is less than 0, we know the ray does not intersect
+                if(discrim > 0){
+                    float q = (b > 0) ? -0.5f * (b + sqrt(discrim)) : -0.5f * (b - sqrt(discrim));
+                    
+                    //Two potential intersection distances on ray
+                    float x0 = q / a;
+                    float x1 = c / q;
+                    float2 t = float2(0,0);
+
+                    if(x0 < 0 && x1 < 0){
+                        //Both distances are negative, meaning the the sphere is behind us
+                    }
+                    else if(x1 < 0){
+                        // Only one direction is behind us
+                        t.x = o;
+                        t.y = x0;
+                    }
+                    else if(x0 < 0){
+                        // Only one direction is behind us
+                        t.x = 0;
+                        t.y = x1;
+                    }
+                    else{
+                        t.x = min(x0, x1);
+                        t.y = max(x0, x1);
+                    }
+
+                    float3 uvw = float3(i.uv.x * _Perlin3DTexture_ST.x, i.uv.y * _Perlin3DTexture_ST.y, 0.1);
+                    //return tex3D(_Perlin3DTexture, uvw);
+
+                    float dist = (t.y - t.x);
+
+                    float noiseSum = 0.0;
+                    int steps = 10;
+                    float weight = 1.0 / (float)steps;
+                    for(int j = 0; j < steps; j++){
+                        float currDist = (float)j/dist;
+                        float3 pos = o + dir * (t.x + currDist);
+
+                        noiseSum += tex3D(_Perlin3DTexture, pos) * weight;
+                    }
+
+                    float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), noiseSum);
+                    return fixed4(col, 1);
+
+                    // float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), dist);
+                    // return fixed4(col, 1.0);
+
+                    // return fixed4(col, tex3D(_Perlin3DTexture, float3(i.uv, 0.0f)).r);
+                }
+                else{
+                    float3 col = lerp(tex2D(_MainTex, i.uv), float3(0,0,0), 0.5f);
+                    return fixed4(col, 1.0);
+                }
+
                 // //if(discrim > 0){
                 //     float q = (b > 0) ? -0.5 * (b + sqrt(discrim)) : -0.5 * (b - sqrt(discrim));
 
@@ -83,10 +137,6 @@ Shader "Parker/PerlinSphere"
                 // else{
                 //     t = min(x0, x1);
                 // }
-
-                float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0) * test, 0.5f);
-                // return fixed4(_CameraFOV - 60.0, 0, 0, 1.0);
-                return fixed4(col, 1.0);
             }
             ENDCG
         }

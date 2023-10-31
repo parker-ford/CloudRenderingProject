@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: f5a326aea18498143896c82ce980cdd7, type: 3}
   textureSize: 64
+  cellSize: 6
 --- !u!4 &346076829
 Transform:
   m_ObjectHideFlags: 0
