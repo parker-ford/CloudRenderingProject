@@ -77,7 +77,7 @@ Shader "Parker/PerlinSphere"
                     }
                     else if(x1 < 0){
                         // Only one direction is behind us
-                        t.x = o;
+                        t.x = 0;
                         t.y = x0;
                     }
                     else if(x0 < 0){
@@ -93,20 +93,21 @@ Shader "Parker/PerlinSphere"
 
 
                     float dist = (t.y - t.x);
-                    float noiseSum = 0.0;
                     int steps = 10;
-                    float weight = 1.0 / (float)steps;
+                    float densityResult = 1.0f;
+                    float density = 0.1f;
                     for(int j = 0; j < steps; j++){
                         float currDist = (float)j/dist;
-                        float3 pos = o + dir * (t.x + currDist);
-                        noiseSum += tex3D(_Perlin3DTexture, pos * _Perlin3DTexture_ST.x) * weight;
+                        float3 pos = o + dir * (t.x * currDist);
+                        densityResult *=  exp(-(dist/steps)*density);
                     }
 
-                    float3 col = lerp(tex2D(_MainTex, i.uv), float3(1,0,0), noiseSum);
+                    float3 col = lerp( float3(1,0,0),  tex2D(_MainTex, i.uv), densityResult);
                     return fixed4(col, 1);
+
                 }
                 else{
-                    float3 col = lerp(tex2D(_MainTex, i.uv), float3(0,0,0), 0.5f);
+                    float3 col = lerp(tex2D(_MainTex, i.uv), float3(0,0,0), 0.0f);
                     return fixed4(col, 1.0);
                 }
             }

@@ -16,6 +16,7 @@ float3 getPixelRayInWorld(float2 uv){
     uv.x *= _CameraAspect;
 
     //Get ray
+    //TODO: Test if the z component should be -1 or 1
     float3 ray = normalize(float3(uv.x, uv.y, 1.0));
 
     //Transform ray to world space

@@ -42,7 +42,7 @@ Shader "Parker/CloudTypeGradient"
             fixed4 frag (v2f i) : SV_Target
             {
                 float col = 1.0 - sin(i.uv.y);
-                col *= col * col * col * col * col;
+                col *= col * col * col * col * col * col * col + 0.1;
 
                 return fixed4(col, col, col, 1.0);
             }
