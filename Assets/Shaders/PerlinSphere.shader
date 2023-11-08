@@ -96,13 +96,22 @@ Shader "Parker/PerlinSphere"
                     int steps = 10;
                     float densityResult = 1.0f;
                     float density = 0.1f;
+                    bool samplePerlin = false;
+                    float test = 0.0;
                     for(int j = 0; j < steps; j++){
                         float currDist = (float)j/dist;
                         float3 pos = o + dir * (t.x * currDist);
-                        densityResult *=  exp(-(dist/steps)*density);
+                        float densitySample = density;
+                        if(samplePerlin){
+                            float noise = tex3D( _Perlin3DTexture, pos);
+                            noise = (noise + 1) / 2.0f;
+                            densitySample = densitySample * noise;
+                            test = noise;
+                        }
+                        densityResult *=  exp(-(dist/steps)*densitySample);
                     }
 
-                    float3 col = lerp( float3(1,0,0),  tex2D(_MainTex, i.uv), densityResult);
+                    float3 col = lerp( float3(1,0,0),  tex2D(_MainTex, i.uv), test);
                     return fixed4(col, 1);
 
                 }
