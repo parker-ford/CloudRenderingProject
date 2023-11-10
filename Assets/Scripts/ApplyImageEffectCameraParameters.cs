@@ -6,7 +6,6 @@ using UnityEngine;
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
     public Material material;
-    public GameObject sphere;
     public Light myLight;
     private Camera myCamera;
 
@@ -24,8 +23,9 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
             Debug.Log(myCamera.fieldOfView);
             material.SetFloat("_CameraFOV", myCamera.fieldOfView);
             material.SetFloat("_CameraAspect", myCamera.aspect);
-            material.SetVector("_SpherePosition", sphere.transform.position);
-            material.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2f);
+            //SHould not be here 
+            // material.SetVector("_SpherePosition", sphere.transform.position);
+            // material.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2f);
             material.SetVector("_LightDirection", -myLight.transform.forward.normalized);
         }
     }
