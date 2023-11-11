@@ -3,6 +3,8 @@ Shader "Parker/PerlinUnitCube"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Perlin3DTexture ("Perlin 3D Texture", 3D) = "" {}
+        _NoiseThreshold ("Noise Threshold", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -40,9 +42,12 @@ Shader "Parker/PerlinUnitCube"
             }
 
             sampler2D _MainTex;
+            sampler3D _Perlin3DTexture;
+            float _NoiseThreshold;
 
             fixed4 frag (v2f i) : SV_Target
             {
+
                 float3 dir = getPixelRayInWorld(i.uv);
                 float3 o = getCameraOriginInWorld();
 
@@ -97,7 +102,7 @@ Shader "Parker/PerlinUnitCube"
                     float pos_v = dot(pos - p, v);
 
                     if(abs(pos_u) < scale && abs(pos_v) < scale){
-                        if(foundPoints < 2){
+                        if(foundPoints < 2 && t > 0){
                             intersectPoints[foundPoints] = t;
                             foundPoints++;
                         }
@@ -106,8 +111,34 @@ Shader "Parker/PerlinUnitCube"
                 }
 
                 if(foundPoints == 2){
+                    //Here we have cube intersection
 
-                    return fixed4(1.0,0,0,1);
+                    float t1 = min(intersectPoints[0],intersectPoints[1]);
+                    float t2 = max(intersectPoints[0],intersectPoints[1]);
+
+                    int steps = 10;
+                    float distBetweenPoints = length(t2 - t1);
+                    float distPerStep = distBetweenPoints / float(steps);
+                    bool aboveThres = false;
+                    float foundNoiseValue = 0.0;
+                    for(int i = 0; i < 10; i++){
+                        float3 pos = o + dir * (t1 + (distPerStep * (float)i));
+                        float3 samplePos = remap_f3(pos, -scale, scale, 0.0, 1.0);
+                        float noise = tex3D(_Perlin3DTexture, samplePos).x;
+                        noise = (noise + 1.0) / 2.0;
+                        if(noise > _NoiseThreshold){
+                            foundNoiseValue = noise;
+                            aboveThres = true;
+                            break;
+                        }
+                    }
+                    if(aboveThres){
+                        return fixed4(foundNoiseValue,0,0,1);
+                    }
+                    else{
+                        return fixed4(0.0,0,0,1);
+                    }
+                    
                 }
 
                 return fixed4(0.0,0,0,1);
