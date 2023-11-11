@@ -133,6 +133,7 @@ Shader "Parker/PerlinUnitCube"
                         }
                     }
                     if(aboveThres){
+                        
                         return fixed4(foundNoiseValue,0,0,1);
                     }
                     else{

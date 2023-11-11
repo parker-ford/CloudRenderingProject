@@ -20,14 +20,26 @@ public class CameraController : MonoBehaviour {
     float camSens = 0.1f; //How sensitive it with mouse
     private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
     private float totalRun= 1.0f;
-     
+    private float rotationSpeed = 100f;
     void Update () {
-        if(useMouse){
-            lastMouse = Input.mousePosition - lastMouse ;
-            lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
-            lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x , transform.eulerAngles.y + lastMouse.y, 0);
-            transform.eulerAngles = lastMouse;
-            lastMouse =  Input.mousePosition;
+        // if(useMouse){
+        //     lastMouse = Input.mousePosition - lastMouse ;
+        //     lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
+        //     lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x , transform.eulerAngles.y + lastMouse.y, 0);
+        //     transform.eulerAngles = lastMouse;
+        //     lastMouse =  Input.mousePosition;
+        // }
+        if(Input.GetKey(KeyCode.RightArrow)){
+            transform.localRotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up);
+        }
+        if(Input.GetKey(KeyCode.LeftArrow)){
+            transform.localRotation *= Quaternion.AngleAxis(-rotationSpeed * Time.deltaTime, Vector3.up);
+        }
+         if(Input.GetKey(KeyCode.UpArrow)){
+            transform.localRotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.right);
+        }
+        if(Input.GetKey(KeyCode.DownArrow)){
+            transform.localRotation *= Quaternion.AngleAxis(-rotationSpeed * Time.deltaTime, Vector3.right);
         }
         //Mouse  camera angle done.  
        
