@@ -11,7 +11,7 @@ public class AnimatePlane : MonoBehaviour
     public float height = 1.0f;
     public bool animatePositionY = false;
 
-    public bool showOriginal = false;
+    public bool overlayOriginal = false;
 
     float xPos = 0;
     float yPos = 0;
@@ -30,7 +30,7 @@ public class AnimatePlane : MonoBehaviour
     void Update()
     {
         planeObj.transform.localScale = new Vector3(width, height, 1.0f);
-        //planeObj.transform.localPosition = new Vector3(xPos, yPos, zPos);
+        planeObj.transform.localPosition = new Vector3(xPos, yPos, zPos);
 
         mat.SetVector("_PlanePosition", planeObj.transform.position);
         mat.SetVector("_PlaneNormal", planeObj.transform.forward);
@@ -42,11 +42,12 @@ public class AnimatePlane : MonoBehaviour
             yPos = Mathf.Sin(Time.time);
         }
 
-        if(showOriginal){
-            mat.SetInt("_ShowOriginal", 1);
+
+        if(overlayOriginal){
+            mat.SetInt("_OverlayOriginal", 1);
         }
         else{
-            mat.SetInt("_ShowOriginal", 0);
+            mat.SetInt("_OverlayOriginal", 0);
         }
     }
 }
