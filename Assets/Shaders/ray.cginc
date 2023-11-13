@@ -34,3 +34,118 @@ float3 getCameraOriginInWorld(){
     float3 camWorld = camWorldHomog.xyz / camWorldHomog.w;
     return camWorld;
 }
+
+struct intersectData{
+    bool intersects;
+    float2 intersectPoints;
+
+};
+
+intersectData intersectUnitCube(float3 rayOrigin, float3 rayDir){
+    //This code will only work for unit cube with no rotation
+    float3 up = float3(0.0, 1.0, 0.0);
+    float3 right = float3(1.0, 0.0, 0.0);
+    float3 forward = float3(0.0, 0.0, 1.0);
+
+    float3 cubeFaceVectors[6][3];
+
+    cubeFaceVectors[0][0] = up;
+    cubeFaceVectors[0][1] = forward;
+    cubeFaceVectors[0][2] = right;
+
+    cubeFaceVectors[1][0] = -up;
+    cubeFaceVectors[1][1] = forward;
+    cubeFaceVectors[1][2] = right;
+
+    cubeFaceVectors[2][0] = forward;
+    cubeFaceVectors[2][1] = up;
+    cubeFaceVectors[2][2] = right;
+
+    cubeFaceVectors[3][0] = -forward;
+    cubeFaceVectors[3][1] = up;
+    cubeFaceVectors[3][2] = right;
+
+    cubeFaceVectors[4][0] = right;
+    cubeFaceVectors[4][1] = up;
+    cubeFaceVectors[4][2] = forward;
+
+    cubeFaceVectors[5][0] = -right;
+    cubeFaceVectors[5][1] = up;
+    cubeFaceVectors[5][2] = forward;
+
+    float scale = 0.5f;
+    float3 cubePosition = float3(0,0,0);
+
+    float intersectPoints[2];
+    int foundPoints = 0;
+
+    for(int i = 0; i < 6; i++){
+        float3 n = cubeFaceVectors[i][0];
+        float3 u = cubeFaceVectors[i][1];
+        float3 v = cubeFaceVectors[i][2];
+
+        float3 p = cubePosition + n * scale;
+        float t = dot(n, p - rayOrigin) / dot(n, rayDir);
+        
+        float3 pos = rayOrigin + rayDir * t;
+        float pos_u = dot(pos - p, u);
+        float pos_v = dot(pos - p, v);
+
+        if(abs(pos_u) < scale && abs(pos_v) < scale){
+            if(foundPoints < 2 && t > 0){
+                intersectPoints[foundPoints] = t;
+                foundPoints++;
+            }
+        }
+    }
+
+    intersectData result;
+    result.intersects = false;
+    result.intersectPoints = float2(0,0);
+    
+    if(foundPoints == 2){
+        result.intersects = true;
+        result.intersectPoints.x = min(intersectPoints[0],intersectPoints[1]);
+        result.intersectPoints.x = max(intersectPoints[0],intersectPoints[1]);
+    }
+
+    return result; 
+
+}
+
+intersectData sphereIntersection(float3 rayOrigin, float3 rayDirection, float3 center, float radius){
+    
+    intersectData result;
+    result.intersects = false;
+    result.intersectPoints = float2(0,0);
+
+    //Vector from ray origin to center of sphere
+    float3 L = center - rayOrigin;
+
+    //projected point from sphere center to view ray
+    float tc = dot(L, rayDirection);
+
+    //If tc is negative we know the ray does not intersect and can return early
+    if(tc < 0){
+        return result;
+    }
+
+    //Distance from center of sphere to view ray
+    float d = sqrt(pow(tc, 2) - pow(length(L), 2));
+
+    //If d is greater than the radius, we know that the ray does not intersect and we can return early
+    if(d > radius){
+        return result;
+    }
+
+    //The distance from the edge of the sphere to the projected point
+    float t1c = sqrt(pow(radius,2) - pow(d,2));
+
+    //The final distances for the intersect points
+    result.intersectPoints.x = tc - t1c;
+    result.intersectPoints.y = tc + t1c;
+    result.intersects = true;
+
+    return result;
+
+}
