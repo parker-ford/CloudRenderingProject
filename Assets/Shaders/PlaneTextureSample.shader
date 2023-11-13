@@ -47,10 +47,15 @@ Shader "Parker/PlaneTextureSample"
             float3 _PlaneUp;
             float _PlaneHeight;
             float _PlaneWidth;
+            int _ShowOriginal;
 
 
             fixed4 frag (v2f i) : SV_Target
             {
+                if(_ShowOriginal == 1){
+                    return tex2D(_MainTex, i.uv);
+                }
+
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
@@ -59,8 +64,8 @@ Shader "Parker/PlaneTextureSample"
                     float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
 
                     float2 samplePos;
-                    samplePos.x = remap_f(pos.x, -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
-                    samplePos.y = remap_f(pos.y, -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                    samplePos.x = remap_f(pos.x - _PlanePosition.x, -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                    samplePos.y = remap_f(pos.y - _PlanePosition.y, -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
 
                     return tex2D(_Tex, samplePos);
                     // return fixed4(1.0, 0.0, 0.0, 1.0);
