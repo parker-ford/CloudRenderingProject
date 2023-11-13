@@ -58,7 +58,9 @@ Shader "Parker/PlaneTextureSample"
 
                     float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
 
-                    float2 samplePos = remap_f2(pos.xy, -0.5, 0.5, 0.0, 1.0);
+                    float2 samplePos;
+                    samplePos.x = remap_f(pos.x, -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                    samplePos.y = remap_f(pos.y, -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
 
                     return tex2D(_Tex, samplePos);
                     // return fixed4(1.0, 0.0, 0.0, 1.0);
