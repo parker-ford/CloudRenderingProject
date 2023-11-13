@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 720531116}
   - component: {fileID: 720531115}
   - component: {fileID: 720531118}
+  - component: {fileID: 720531119}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -210,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 720531114}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -228,9 +229,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 328f330a66b31e845ab344f7ab0d8e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 0}
-  sphere: {fileID: 0}
+  material: {fileID: 2100000, guid: ef2fe2b3f668be943a4979cf7fcb3aa3, type: 2}
   myLight: {fileID: 1743396852}
+--- !u!114 &720531119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 720531114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aa2b9865e704f7469814ba384421dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useMouse: 0
 --- !u!1 &1743396851
 GameObject:
   m_ObjectHideFlags: 0
