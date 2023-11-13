@@ -149,3 +149,47 @@ intersectData sphereIntersection(float3 rayOrigin, float3 rayDirection, float3 c
     return result;
 
 }
+
+intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, float3 n){
+    intersectData result;
+    result.intersects = false;
+    result.intersectPoints = float2(0,0);
+
+    float t = dot(n, pos - rayOrigin) / dot(n, rayDir);
+
+    if(t > 0){
+        result.intersects = true;
+        result.intersectPoints = float2(t,t);
+    }
+
+    return result;
+
+}
+
+
+intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, float3 n, float3 up, float scale){
+    intersectData result;
+    result.intersects = false;
+    result.intersectPoints = float2(0,0);
+
+    float t = dot(n, pos - rayOrigin) / dot(n, rayDir);
+
+    if(t > 0){
+
+        float3 right = cross(up, n);
+
+        float3 p = rayOrigin + rayDir * t;
+        float pos_up = dot(p - pos, up);
+        float pos_right = dot(p - pos, right);
+
+        if(abs(pos_up) < scale && abs(pos_right) < scale){
+            result.intersects = true;
+            result.intersectPoints = float2(t,t);
+        }
+
+        
+    }
+
+    return result;
+
+}
