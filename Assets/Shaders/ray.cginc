@@ -167,7 +167,7 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
 }
 
 
-intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, float3 n, float3 up, float scale){
+intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, float3 n, float3 up, float width, float height){
     intersectData result;
     result.intersects = false;
     result.intersectPoints = float2(0,0);
@@ -182,7 +182,7 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
         float pos_up = dot(p - pos, up);
         float pos_right = dot(p - pos, right);
 
-        if(abs(pos_up) < scale && abs(pos_right) < scale){
+        if(abs(pos_up) < height && abs(pos_right) < width){
             result.intersects = true;
             result.intersectPoints = float2(t,t);
         }
