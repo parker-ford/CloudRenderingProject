@@ -123,7 +123,7 @@ intersectData sphereIntersection(float3 rayOrigin, float3 rayDirection, float3 c
     float3 L = center - rayOrigin;
 
     //projected point from sphere center to view ray
-    float tc = dot(L, rayDirection);
+    float tc = dot(L, normalize(rayDirection));
 
     //If tc is negative we know the ray does not intersect and can return early
     if(tc < 0){
@@ -131,7 +131,7 @@ intersectData sphereIntersection(float3 rayOrigin, float3 rayDirection, float3 c
     }
 
     //Distance from center of sphere to view ray
-    float d = sqrt(pow(tc, 2) - pow(length(L), 2));
+    float d = sqrt((length(L) * length(L)) - (tc * tc));
 
     //If d is greater than the radius, we know that the ray does not intersect and we can return early
     if(d > radius){

@@ -20,7 +20,6 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
 
     void Update(){
         if(myCamera != null){
-            Debug.Log(myCamera.fieldOfView);
             material.SetFloat("_CameraFOV", myCamera.fieldOfView);
             material.SetFloat("_CameraAspect", myCamera.aspect);
             //SHould not be here 

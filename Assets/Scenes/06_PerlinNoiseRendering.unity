@@ -324,7 +324,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 001afcb87ea3344468fccbdc502446e3, type: 2}
-  sphere: {fileID: 1455027894}
   myLight: {fileID: 95270411}
 --- !u!114 &568738719
 MonoBehaviour:
