@@ -44,6 +44,7 @@ Shader "Parker/PlaneTextureSample"
 
             float3 _PlanePosition;
             float3 _PlaneNormal;
+            float3 _PlaneRight;
             float3 _PlaneUp;
             float _PlaneHeight;
             float _PlaneWidth;
@@ -58,10 +59,11 @@ Shader "Parker/PlaneTextureSample"
                 intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
                 if(planeIntersect.intersects == true){
                     float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
-
                     float2 samplePos;
-                    samplePos.x = remap_f(pos.x - _PlanePosition.x, -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
-                    samplePos.y = remap_f(pos.y - _PlanePosition.y, -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                    samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                    samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                    // samplePos.x = remap_f(pos.x - _PlanePosition.x, -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                    // samplePos.y = remap_f(pos.y - _PlanePosition.y, -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
 
                     color =  tex2D(_Tex, samplePos);
                     // return fixed4(1.0, 0.0, 0.0, 1.0);
