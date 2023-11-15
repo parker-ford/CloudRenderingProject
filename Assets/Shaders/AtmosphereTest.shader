@@ -42,6 +42,7 @@ Shader "Parker/AtmosphereTest"
 
             sampler2D _MainTex;
             sampler2D _TestTex;
+            sampler2D _CloudCoverage;
 
             float3 _PlanePosition;
             float3 _PlaneNormal;
@@ -77,21 +78,28 @@ Shader "Parker/AtmosphereTest"
                 return color;
             }
 
-            float4 renderCloudCoverage(v2f i){
+            float4 renderCloudCoverageTexture(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
-                intersectData planeIntersectBot = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
-                intersectData planeIntersectTop = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, _AtmosphereHeight, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                float dist = _AtmosphereHeight;
+                float distPerStep = dist / (float)_NumSteps;
 
-                float3 posBot = rayOrigin + rayDir * planeIntersectBot.intersectPoints.x;
-                float3 posTop = rayOrigin + rayDir * planeIntersectTop.intersectPoints.x;
-
-                float dist = length(posBot - posTop);
-                float distPerStep = dist / (float) _NumSteps;
+                float4 color = tex2D(_MainTex, i.uv);
 
                 for(int j = 0; j < _NumSteps; j++){
+                    intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    float4 sampleCol = color;
+                    if(planeIntersect.intersects){
+                        float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
+                        float2 samplePos;
+                        samplePos.x = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                        samplePos.y = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                        sampleCol = tex2D(_CloudCoverage, samplePos);
+                    }
                     
+                    color = lerp(color, sampleCol, 1.0 / (float) _NumSteps);
                 }
+                return color;
 
             }
 
@@ -101,7 +109,7 @@ Shader "Parker/AtmosphereTest"
                     return renderTestTexture(i);
                 }
                 else if(_TestMode == 2){
-
+                    return renderCloudCoverageTexture(i);
                 }
 
                 return fixed4(0,0,0,1);

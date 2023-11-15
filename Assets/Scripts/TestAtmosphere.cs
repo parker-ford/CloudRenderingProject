@@ -12,7 +12,7 @@ public class TestAtmosphere : MonoBehaviour
 
     public enum TestMode {
         renderTestTexture = 1,
-        renderCloudCoverage = 2,
+        renderCloudCoverageTexture = 2,
     }
 
     public TestMode testMode;
@@ -20,13 +20,18 @@ public class TestAtmosphere : MonoBehaviour
     void Start()
     {
 
-            mat.SetVector("_PlanePosition", transform.position);
-            mat.SetVector("_PlaneNormal", transform.forward);
-            mat.SetVector("_PlaneRight", -transform.right);
-            mat.SetVector("_PlaneUp", transform.up);
-            mat.SetFloat("_PlaneHeight", transform.localScale.y / 2.0f);
-            mat.SetFloat("_PlaneWidth", transform.localScale.x / 2.0f);
-            mat.SetInt("_TestMode", (int)testMode);
+        MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer renderer in renderers){
+            renderer.enabled = false;
+        }
+
+        mat.SetVector("_PlanePosition", transform.position);
+        mat.SetVector("_PlaneNormal", transform.forward);
+        mat.SetVector("_PlaneRight", -transform.right);
+        mat.SetVector("_PlaneUp", transform.up);
+        mat.SetFloat("_PlaneHeight", transform.localScale.y / 2.0f);
+        mat.SetFloat("_PlaneWidth", transform.localScale.x / 2.0f);
+            
             
             
     }
@@ -36,5 +41,6 @@ public class TestAtmosphere : MonoBehaviour
     {
         mat.SetFloat("_AtmosphereHeight", atmosphereHeight);
         mat.SetInt("_NumSteps", numSteps);
+        mat.SetInt("_TestMode", (int)testMode);
     }
 }

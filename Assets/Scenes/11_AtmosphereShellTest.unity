@@ -141,9 +141,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
-  atmosphereHeight: 100
-  numSteps: 2
-  testMode: 1
+  atmosphereHeight: 0
+  numSteps: 1
+  testMode: 2
 --- !u!1 &541718664
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +416,10 @@ PrefabInstance:
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320389325464443187, guid: fff3509650f4ea04f979638af280379f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8669570873837645068, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_Name
