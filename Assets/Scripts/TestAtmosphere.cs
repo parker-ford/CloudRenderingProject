@@ -10,9 +10,12 @@ public class TestAtmosphere : MonoBehaviour
 
     public int numSteps = 1;
 
+    public float densityMultiplier = 1;
+
     public enum TestMode {
         renderTestTexture = 1,
         renderCloudCoverageTexture = 2,
+        rednerCloudCoverage = 3
     }
 
     public TestMode testMode;
@@ -42,5 +45,6 @@ public class TestAtmosphere : MonoBehaviour
         mat.SetFloat("_AtmosphereHeight", atmosphereHeight);
         mat.SetInt("_NumSteps", numSteps);
         mat.SetInt("_TestMode", (int)testMode);
+        mat.SetFloat("_DensityMultiplier", densityMultiplier);
     }
 }

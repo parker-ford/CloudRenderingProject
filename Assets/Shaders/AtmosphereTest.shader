@@ -51,6 +51,7 @@ Shader "Parker/AtmosphereTest"
             float _PlaneHeight;
             float _PlaneWidth;
             float _AtmosphereHeight;
+            float _DensityMultiplier;
 
             int _NumSteps;
             int _TestMode;
@@ -103,6 +104,31 @@ Shader "Parker/AtmosphereTest"
 
             }
 
+            float4 renderCloudCoverage(v2f i){
+                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayOrigin = getCameraOriginInWorld();
+                float dist = _AtmosphereHeight;
+                float distPerStep = dist / (float)_NumSteps;
+                float4 mainColor = tex2D(_MainTex, i.uv);
+                float4 cloudColor = float4(1,1,1,0);
+                float densitySample = 0;
+
+                intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+
+                for(int j = 0; j < _NumSteps; j++){
+                    if(planeIntersect.intersects){
+
+                        float3 pos = rayOrigin + rayDir * (planeIntersect.intersectPoints.x + distPerStep * j);
+                        float2 samplePos;
+                        samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                        samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                        densitySample += tex2D(_CloudCoverage, samplePos).x;
+                    }
+                }
+
+                return lerp(mainColor, cloudColor, densitySample * 1.0/(float)_NumSteps * _DensityMultiplier);
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 if(_TestMode == 1){
@@ -110,6 +136,9 @@ Shader "Parker/AtmosphereTest"
                 }
                 else if(_TestMode == 2){
                     return renderCloudCoverageTexture(i);
+                }
+                else if(_TestMode == 3){
+                    return renderCloudCoverage(i);
                 }
 
                 return fixed4(0,0,0,1);
