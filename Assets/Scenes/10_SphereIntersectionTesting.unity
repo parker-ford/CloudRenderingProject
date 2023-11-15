@@ -240,10 +240,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 751039977}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aa2b9865e704f7469814ba384421dd9, type: 3}
+  m_Script: {fileID: 11500000, guid: fa4a54756a816894a91c2d7824329325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useMouse: 0
+  moveNormalSpeed: 10
+  moveFastSpeed: 20
+  rotationSpeed: 2000
 --- !u!1 &1003714587
 GameObject:
   m_ObjectHideFlags: 0

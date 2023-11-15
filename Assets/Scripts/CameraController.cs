@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float moveNormalSpeed = 5f;
-    public float moveFastSpeed = 100f;
+    public float moveNormalSpeed = 10f;
+    public float moveFastSpeed = 20f;
     private float moveSpeed;
-    public float rotationSpeed = 50f;
+    public float rotationSpeed = 2000f;
     Vector2 currMouse;
     Vector3 currentRotation;
+    
+    bool hasFocus;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,12 +22,10 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Vector2 lastMouse = currentMouse;
-        // currentMouse = Input.mousePosition;
-        // Vector2 deltaMouse = lastMouse - currentMouse;
+   
+        CheckFocus();
 
-        
-        if(Input.GetMouseButton(1)){
+        if(Input.GetMouseButton(1) && hasFocus){
 
             if(Input.GetKey(KeyCode.LeftShift)){
                 moveSpeed = moveFastSpeed;
@@ -71,6 +72,16 @@ public class CameraController : MonoBehaviour
         }
         else{
             Cursor.lockState = CursorLockMode.None;
+        }
+    }
+
+    void OnApplicationFocus(bool focus){
+        hasFocus = focus;
+    }
+
+    void CheckFocus(){
+        if(!hasFocus){
+            Input.ResetInputAxes();
         }
     }
 }
