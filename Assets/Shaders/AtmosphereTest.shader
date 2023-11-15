@@ -57,49 +57,24 @@ Shader "Parker/AtmosphereTest"
             float4 renderTestTexture(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
-                float dist = _AtmosphereHeight - _PlanePosition.y;
+                float dist = _AtmosphereHeight;
                 float distPerStep = dist / (float)_NumSteps;
 
                 float4 color = tex2D(_MainTex, i.uv);
 
                 for(int j = 0; j < _NumSteps; j++){
-                    intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + ((float)j * distPerStep), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
                     float4 sampleCol = color;
                     if(planeIntersect.intersects){
                         float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
                         float2 samplePos;
-                        samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
-                        samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
+                        samplePos.x = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
+                        samplePos.y = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
                         sampleCol = tex2D(_TestTex, samplePos);
                     }
                     color = lerp(color, sampleCol, 1.0 / (float) _NumSteps);
                 }
                 return color;
-
-                // intersectData planeIntersectBot = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
-                // intersectData planeIntersectTop = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, _AtmosphereHeight, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
-
-                // if(planeIntersectBot.intersects){
-                //     float3 pos = rayOrigin + rayDir * planeIntersectBot.intersectPoints.x;
-                //     float2 samplePos;
-                //     samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
-                //     samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
-                //     float4 testBotCol = tex2D(_TestTex, samplePos);
-                    
-                //     if(planeIntersectTop.intersects){
-                //         pos = rayOrigin + rayDir * planeIntersectTop.intersectPoints.x;
-                //         samplePos.x = remap_f(dot(pos - _PlanePosition + float3(0, 0, 0), _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
-                //         samplePos.y = remap_f(dot(pos - _PlanePosition + float3(0, 0, 0), _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
-                //         float4 testTopCol = tex2D(_TestTex, samplePos);
-
-                //         return lerp(testBotCol, testTopCol, 0.25f);
-                //     }
-                    
-                //     return lerp(testBotCol, tex2D(_MainTex, i.uv), 0.25);
-                // }
-                // else{
-                //     return tex2D(_MainTex, i.uv);
-                // }
             }
 
             float4 renderCloudCoverage(v2f i){

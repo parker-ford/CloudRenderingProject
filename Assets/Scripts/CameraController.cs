@@ -23,12 +23,6 @@ public class CameraController : MonoBehaviour
 
         
         if(Input.GetMouseButton(1)){
-
-            Cursor.lockState = CursorLockMode.Locked;
-            // Vector2 deltaMosue = currMouse - (Vector2)Input.mousePosition;
-            // currMouse = (Vector2)Input.mousePosition;
-            Vector2 deltaMouse = new Vector2(-Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
-
             if(Input.GetKey(KeyCode.W)){
                 transform.position += transform.forward * Time.deltaTime * moveSpeed;
             }
@@ -48,6 +42,10 @@ public class CameraController : MonoBehaviour
                 transform.position -= transform.up * Time.deltaTime * moveSpeed;
             }
 
+
+            
+            Cursor.lockState = CursorLockMode.Locked;
+            Vector2 deltaMouse = new Vector2(-Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
             
             Quaternion qX = Quaternion.AngleAxis(-deltaMouse.x * Time.deltaTime * rotationSpeed, Vector3.up);
             Quaternion qY = Quaternion.AngleAxis(deltaMouse.y * Time.deltaTime * rotationSpeed, transform.right);
