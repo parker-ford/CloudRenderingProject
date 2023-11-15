@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
   atmosphereHeight: 100
-  numSteps: 1
+  numSteps: 2
   testMode: 1
 --- !u!1 &541718664
 GameObject:
@@ -344,7 +344,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4a54756a816894a91c2d7824329325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  moveNormalSpeed: 5
+  moveFastSpeed: 100
   rotationSpeed: 2000
 --- !u!114 &762814605
 MonoBehaviour:

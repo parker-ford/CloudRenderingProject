@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveNormalSpeed = 5f;
+    public float moveFastSpeed = 100f;
+    private float moveSpeed;
     public float rotationSpeed = 50f;
     Vector2 currMouse;
     Vector3 currentRotation;
@@ -23,6 +25,14 @@ public class CameraController : MonoBehaviour
 
         
         if(Input.GetMouseButton(1)){
+
+            if(Input.GetKey(KeyCode.LeftShift)){
+                moveSpeed = moveFastSpeed;
+            }
+            else{
+                moveSpeed = moveNormalSpeed;
+            }
+
             if(Input.GetKey(KeyCode.W)){
                 transform.position += transform.forward * Time.deltaTime * moveSpeed;
             }
@@ -51,6 +61,8 @@ public class CameraController : MonoBehaviour
             Quaternion qY = Quaternion.AngleAxis(deltaMouse.y * Time.deltaTime * rotationSpeed, transform.right);
             Quaternion q = qX * qY;
             Matrix4x4 R = Matrix4x4.Rotate(q);
+            Matrix4x4 invP = Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
+            R = invP * R * invP.inverse;
             Vector3 newCameraPos = R.MultiplyPoint(transform.localPosition);
             transform.localPosition = newCameraPos;
             transform.localRotation = q * transform.localRotation;
