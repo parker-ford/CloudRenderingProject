@@ -55,6 +55,7 @@ Shader "Parker/AtmosphereTest"
 
             int _NumSteps;
             int _TestMode;
+            int _InfinitePlane;
 
             float4 renderTestTexture(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
@@ -65,7 +66,13 @@ Shader "Parker/AtmosphereTest"
                 float4 color = tex2D(_MainTex, i.uv);
 
                 for(int j = 0; j < _NumSteps; j++){
-                    intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    intersectData planeIntersect;
+                    if(_InfinitePlane){
+                        planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal);
+                    }
+                    else{
+                        planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    }
                     float4 sampleCol = color;
                     if(planeIntersect.intersects){
                         float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
@@ -88,7 +95,13 @@ Shader "Parker/AtmosphereTest"
                 float4 color = tex2D(_MainTex, i.uv);
 
                 for(int j = 0; j < _NumSteps; j++){
-                    intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    intersectData planeIntersect;
+                    if(_InfinitePlane){
+                        planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal);
+                    }
+                    else{
+                        planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                    }
                     float4 sampleCol = color;
                     if(planeIntersect.intersects){
                         float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
@@ -112,8 +125,13 @@ Shader "Parker/AtmosphereTest"
                 float4 mainColor = tex2D(_MainTex, i.uv);
                 float4 cloudColor = float4(1,1,1,0);
                 float densitySample = 0;
-
-                intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                intersectData planeIntersect;
+                if(_InfinitePlane){
+                    planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal);
+                }
+                else{
+                    planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                }
 
                 for(int j = 0; j < _NumSteps; j++){
                     if(planeIntersect.intersects){

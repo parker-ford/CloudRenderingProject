@@ -48,5 +48,6 @@ public class TestAtmosphere : MonoBehaviour
         mat.SetInt("_NumSteps", numSteps);
         mat.SetInt("_TestMode", (int)testMode);
         mat.SetFloat("_DensityMultiplier", densityMultiplier);
+        mat.SetInt("_InfinitePlane", infinitePlane ? 1 : 0);
     }
 }
