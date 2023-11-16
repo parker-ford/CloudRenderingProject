@@ -143,6 +143,7 @@ MonoBehaviour:
   mat: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
   atmosphereHeight: 0
   numSteps: 1
+  densityMultiplier: 1
   testMode: 2
 --- !u!1 &541718664
 GameObject:

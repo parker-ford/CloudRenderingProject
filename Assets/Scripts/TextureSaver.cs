@@ -7,7 +7,7 @@ public class TextureSaver : MonoBehaviour {
     public string textureName;
     public Material imageEffect;
     private RenderTexture currentTexture;
-    private int finalTextureSize = 512;
+    private int finalTextureSize = 1024;
 
     void Start()
     {
@@ -45,7 +45,8 @@ public class TextureSaver : MonoBehaviour {
             finalTexture.Apply();
 
             byte[] bytes = finalTexture.EncodeToPNG();
-            System.IO.File.WriteAllBytes(Application.dataPath + "/Textures/" + textureName + ".png", bytes);
+            string dateTimeString = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            System.IO.File.WriteAllBytes(Application.dataPath + "/Textures/" + textureName + "/" + textureName + "_" + dateTimeString + ".png", bytes);
             Debug.Log("Saved current Texture");
 
         } 

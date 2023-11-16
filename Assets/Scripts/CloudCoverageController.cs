@@ -18,6 +18,11 @@ public class CloudCoverageController : MonoBehaviour
     [Range(0.01f, 1f)]
     public float nodeWeight3 = 0.1f;
 
+    [Range(0f,1f)]
+    public float noiseThreshold = 0.8f;
+
+    public float noiseMultiplier = 1.2f;
+
     public bool animate = false;
     [Range(0.001f, 1f)]
     public float animateSpeed = 0.2f;
@@ -39,6 +44,10 @@ public class CloudCoverageController : MonoBehaviour
         cloudCoverageMat.SetFloat("_NodeWeight1", nodeWeight1 / weightTotal);
         cloudCoverageMat.SetFloat("_NodeWeight2", nodeWeight2 / weightTotal);
         cloudCoverageMat.SetFloat("_NodeWeight3", nodeWeight3 / weightTotal);
+
+        cloudCoverageMat.SetFloat("_NoiseThreshold", noiseThreshold);
+        cloudCoverageMat.SetFloat("_NoiseMultiplier", noiseMultiplier);
+
 
         if(animate){
             elapsedTime += (Time.deltaTime * animateSpeed);

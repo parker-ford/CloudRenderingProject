@@ -18,6 +18,8 @@ public class TestAtmosphere : MonoBehaviour
         rednerCloudCoverage = 3
     }
 
+    public bool infinitePlane = false;
+
     public TestMode testMode;
     // Start is called before the first frame update
     void Start()

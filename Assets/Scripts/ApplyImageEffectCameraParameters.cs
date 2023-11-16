@@ -6,7 +6,6 @@ using UnityEngine;
 public class ApplyImageEffectCameraParameters : MonoBehaviour
 {
     public Material material;
-    public Light myLight;
     private Camera myCamera;
 
     void Start()
@@ -25,7 +24,6 @@ public class ApplyImageEffectCameraParameters : MonoBehaviour
             //SHould not be here 
             // material.SetVector("_SpherePosition", sphere.transform.position);
             // material.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2f);
-            material.SetVector("_LightDirection", -myLight.transform.forward.normalized);
         }
     }
 
