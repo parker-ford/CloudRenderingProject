@@ -65,6 +65,7 @@ Shader "Parker/AtmosphereTest"
 
                 float4 color = tex2D(_MainTex, i.uv);
 
+            
                 for(int j = 0; j < _NumSteps; j++){
                     intersectData planeIntersect;
                     if(_InfinitePlane){
@@ -73,6 +74,7 @@ Shader "Parker/AtmosphereTest"
                     else{
                         planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
                     }
+
                     float4 sampleCol = color;
                     if(planeIntersect.intersects){
                         float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
