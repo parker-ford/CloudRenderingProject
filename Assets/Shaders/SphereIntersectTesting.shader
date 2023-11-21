@@ -96,6 +96,33 @@ Shader "Parker/SphereIntersectTesting"
 
                         color /= (float) _MarchSteps;
                     }
+                    if(_TestMode == 5){
+                        float dist = sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x;
+                        float distPerStep = dist / (float)_MarchSteps;
+                        for (int j = 0; j < _MarchSteps; j++) {
+                            float3 pos = rayOrigin + rayDir * (sphereIntersect.intersectPoints.x + distPerStep * j);
+                            float distToCenter = length(_SphereCenter - pos);
+                            float normalizedDist = distToCenter / _SphereRadius;
+
+                            // Interpolate colors based on the normalized distance
+                            float4 colorAtPos;
+                            if (normalizedDist < 0.2) {
+                                colorAtPos = lerp(float4(1, 0, 0, 1), float4(0, 1, 0, 1), normalizedDist / 0.2);
+                            } else if (normalizedDist < 0.4) {
+                                colorAtPos = lerp(float4(0, 1, 0, 1), float4(0, 0, 1, 1), (normalizedDist - 0.2) / 0.2);
+                            } else if (normalizedDist < 0.6) {
+                                colorAtPos = lerp(float4(0, 0, 1, 1), float4(1, 0, 1, 1), (normalizedDist - 0.4) / 0.2);
+                            } else if (normalizedDist < 0.8) {
+                                colorAtPos = lerp(float4(1, 0, 1, 1), float4(0, 1, 1, 1), (normalizedDist - 0.6) / 0.2);
+                            } else {
+                                colorAtPos = float4(0, 1, 1, 1);
+                            }
+
+                            color += colorAtPos;
+                        }
+
+                        color /= (float)_MarchSteps;
+                    }
                 }
 
                 if(_OverlayOriginal){

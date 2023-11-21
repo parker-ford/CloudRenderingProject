@@ -12,6 +12,7 @@ public class TestSphereIntersection : MonoBehaviour
         frontIntersectTest = 2,
         backIntersectTest = 3,
         marchTest = 4,
+        continuousMarchTest = 5
     }
 
     public TestMode testMode;
@@ -37,7 +38,7 @@ public class TestSphereIntersection : MonoBehaviour
         else{
             mat.SetInt("_OverlayOriginal", 0);
         }
-        
+
         mat.SetInt("_TestMode", (int)testMode);
         mat.SetInt("_MarchSteps", numSteps);
         mat.SetInt("_RayPerPixel", rayPerPixel);
