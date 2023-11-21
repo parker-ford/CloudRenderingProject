@@ -9,6 +9,7 @@ public class TestAtmosphere : MonoBehaviour
     public float atmosphereHeight = 100;
 
     public int numSteps = 1;
+    public int pixelsPerRay = 1;
 
     public float densityMultiplier = 1;
 
@@ -53,5 +54,6 @@ public class TestAtmosphere : MonoBehaviour
         mat.SetFloat("_DensityMultiplier", densityMultiplier);
         mat.SetInt("_InfinitePlane", infinitePlane ? 1 : 0);
         mat.SetFloat("_DistanceMultiplier", distanceMultiplier);
+        mat.SetInt("_PixelsPerRay", pixelsPerRay);
     }
 }

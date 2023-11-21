@@ -57,6 +57,7 @@ Shader "Parker/AtmosphereTest"
             int _NumSteps;
             int _TestMode;
             int _InfinitePlane;
+            int _PixelsPerRay;
 
             float4 renderTestTexture(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
@@ -168,8 +169,7 @@ Shader "Parker/AtmosphereTest"
                 return mainColor;
             }
 
-            fixed4 frag (v2f i) : SV_Target
-            {
+            float4 getRayColor(v2f i){
                 if(_TestMode == 1){
                     return renderTestTexture(i);
                 }
@@ -184,6 +184,16 @@ Shader "Parker/AtmosphereTest"
                 }
 
                 return fixed4(0,0,0,1);
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                float4 color = 0;
+                for(int j = 0; j < _PixelsPerRay; j++){
+                    color += getRayColor(i);
+                }
+
+                return color / (float)_PixelsPerRay;
             }
             ENDCG
         }
