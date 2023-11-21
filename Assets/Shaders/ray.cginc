@@ -1,12 +1,17 @@
+#ifndef _RAY_CGINC_
+#define _RAY_CGINC_
+
+
 #include "./shaderUtils.cginc"
+#include "./noise.cginc"
 
 float _CameraAspect;
 float _CameraFOV;
 
 float3 getPixelRayInWorld(float2 uv){
 
-    //TODO: Shift uv to center of pixel
-    //uv = float2(uv.x + (1. / _ScreenParams.x), uv.y - (1. / _ScreenParams.y));
+    //Shift uv by random amount
+    uv = float2(uv.x + (1. / _ScreenParams.x) * whiteNoise_2D(uv, uint(_Time.y * 60u + 10000u)), uv.y - (1. / _ScreenParams.y) * whiteNoise_2D(uv, uint(_Time.y * 60u + 8542u)));
 
     //Convert to screen space uv (-1 - 1)
     uv = remap_f2(uv, 0, 1, -1, 1);
@@ -193,3 +198,6 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
     return result;
 
 }
+
+
+#endif

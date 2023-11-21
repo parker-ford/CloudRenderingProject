@@ -17,6 +17,7 @@ public class TestSphereIntersection : MonoBehaviour
     public TestMode testMode;
 
     public int numSteps = 1;
+    public int rayPerPixel = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -36,9 +37,9 @@ public class TestSphereIntersection : MonoBehaviour
         else{
             mat.SetInt("_OverlayOriginal", 0);
         }
-
+        
         mat.SetInt("_TestMode", (int)testMode);
-
         mat.SetInt("_MarchSteps", numSteps);
+        mat.SetInt("_RayPerPixel", rayPerPixel);
     }
 }

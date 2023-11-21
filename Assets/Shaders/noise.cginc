@@ -1,4 +1,7 @@
-//TODO: Only include this if not already included
+#ifndef _NOISE_CGINC_
+#define _NOISE_CGINC_
+
+
 #include "./shaderUtils.cginc"
 
 int seedGen_ui3(int3 input){
@@ -188,7 +191,11 @@ float perlinNoise_3D(float3 p, float cellSize){
     return n;
 }
 
+uint seedCount = 0;
 float whiteNoise_2D(float2 p, uint seedOffset){
     int seed = seedGen_ui2(uint2(uint(p.x * _ScreenParams.x), uint(p.y * _ScreenParams.y)));
-    return normalize_ui(pcgHash_ui(seed * seedOffset));
+    seedCount++;
+    return normalize_ui(pcgHash_ui(seed * seedOffset + seedCount));
 }
+
+#endif

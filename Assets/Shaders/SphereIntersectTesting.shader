@@ -46,12 +46,10 @@ Shader "Parker/SphereIntersectTesting"
             float _SphereRadius;
             int _TestMode;
             int _MarchSteps;
+            int _RayPerPixel;
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                float noise = whiteNoise_2D(i.uv, _Time.y + 100000);
-                float noise2 = whiteNoise_2D(i.uv, _Time.y + 8549);
-                return float4(noise, noise2, 0,1.0);
+
+            float4 getRayColor(v2f i){
 
                 float4 color = float4(0.0, 0.0, 0.0, 1.0);
                 float3 rayDir = getPixelRayInWorld(i.uv);
@@ -106,6 +104,20 @@ Shader "Parker/SphereIntersectTesting"
                 else{
                     return color;
                 }
+            }
+
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                float4 color = float4(0,0,0,0);
+                for(int j = 0; j < _RayPerPixel; j++){
+                    color += getRayColor(i);
+                    //float noise = whiteNoise_2D(i.uv, _Time.y * 10 + (1000));
+                    //color += float4(noise, noise, noise, 1.0);
+                }
+
+                return color / (float)_RayPerPixel;
+                
             }
             ENDCG
         }
