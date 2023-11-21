@@ -144,6 +144,7 @@ MonoBehaviour:
   atmosphereHeight: 0
   numSteps: 1
   densityMultiplier: 1
+  distanceMultiplier: 0
   infinitePlane: 0
   testMode: 1
 --- !u!1 &541718664

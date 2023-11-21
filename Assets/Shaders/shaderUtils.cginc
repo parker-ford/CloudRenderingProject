@@ -3,6 +3,7 @@
 
 
 #define PI 3.14159265359
+#define MAX_INT 2147483647
 
 float remap_f(float value, float in_min, float in_max, float out_min, float out_max){
     return out_min + (((value - in_min) / (in_max - in_min)) * (out_max - out_min));
@@ -29,13 +30,21 @@ float tan_d(float deg){
 }
 
 //TODO: Add source for this
-int pcgHash_i(int state){
-    int word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
-    return (word >> 22) ^ word;
+uint pcgHash_ui(uint state){
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    return (word >> 22u) ^ word;
+}
+
+float random(int seed){
+    return abs(pcgHash_ui(seed)) / MAX_INT;
 }
 
 float fract(float input){
     return input - floor(input);
+}
+
+float normalize_ui(uint input){
+    return float(input) / 4294967295.0;
 }
 
 #endif

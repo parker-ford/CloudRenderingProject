@@ -52,6 +52,7 @@ Shader "Parker/AtmosphereTest"
             float _PlaneWidth;
             float _AtmosphereHeight;
             float _DensityMultiplier;
+            float _DistanceMultiplier;
 
             int _NumSteps;
             int _TestMode;
@@ -149,6 +150,24 @@ Shader "Parker/AtmosphereTest"
                 return lerp(mainColor, cloudColor, densitySample * 1.0/(float)_NumSteps * _DensityMultiplier);
             }
 
+            float4 renderCurvedAtmosphere(v2f i){
+                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayOrigin = getCameraOriginInWorld();
+                float4 color = float4(1.0, 0.0, 0.0, 1.0);
+                float4 mainColor = tex2D(_MainTex, i.uv);
+                // intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
+                intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal);
+                if(planeIntersect.intersects){
+                    float dist = length(planeIntersect.intersectPoints.x - rayOrigin);
+                    intersectData curvedPlaneIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition - float3(0, dist * _DistanceMultiplier, 0), _PlaneNormal);
+                    if(curvedPlaneIntersect.intersects){
+                        return color;
+                    }
+                }
+
+                return mainColor;
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 if(_TestMode == 1){
@@ -159,6 +178,9 @@ Shader "Parker/AtmosphereTest"
                 }
                 else if(_TestMode == 3){
                     return renderCloudCoverage(i);
+                }
+                else if(_TestMode == 4){
+                    return renderCurvedAtmosphere(i);
                 }
 
                 return fixed4(0,0,0,1);

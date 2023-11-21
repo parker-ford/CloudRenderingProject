@@ -17,6 +17,7 @@ Shader "Parker/SphereIntersectTesting"
 
             #include "UnityCG.cginc"
             #include "ray.cginc"
+            #include "noise.cginc"
 
             struct appdata
             {
@@ -48,6 +49,10 @@ Shader "Parker/SphereIntersectTesting"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float noise = whiteNoise_2D(i.uv, _Time.y + 100000);
+                float noise2 = whiteNoise_2D(i.uv, _Time.y + 8549);
+                return float4(noise, noise2, 0,1.0);
+
                 float4 color = float4(0.0, 0.0, 0.0, 1.0);
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();

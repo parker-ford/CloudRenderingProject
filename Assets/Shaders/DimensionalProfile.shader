@@ -55,12 +55,35 @@ Shader "Parker/DimensionalProfile"
                 float3 planePosition = _AtmosphereDimensions.x;
                 float3 planeNormal = float3(0, -1, 0);
 
-                intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, planePosition, planeNormal);
+                int numSteps = 10;
+                float spacingRatio = 1.8;
 
-                if(planeIntersect.intersects ){
-                    float3 startPos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
+                intersectData planeIntersectBot = planeIntersection(rayOrigin, rayDir, _AtmosphereDimensions.x, planeNormal);
+                intersectData planeIntersectTop = planeIntersection(rayOrigin, rayDir, _AtmosphereDimensions.y, planeNormal);
+
+                if(planeIntersectBot.intersects ){
+                    float3 startPos = rayOrigin + rayDir * planeIntersectBot.intersectPoints.x;
+                    float3 endPos = rayOrigin + rayDir * planeIntersectTop.intersectPoints.x;
+                    float dist = length(endPos - startPos);
                     if(length(startPos - rayOrigin) < _MaxViewDistance){
-                        return tex2D(_CloudCoverage, remap_f2(startPos.xz, -_MaxViewDistance, _MaxViewDistance, 0.0, 1.1));
+                        // /return tex2D(_CloudCoverage, remap_f2(startPos.xz, -_MaxViewDistance, _MaxViewDistance, 0.0, 1.1));
+                        float totalFactor = 0;
+                        for(int i = 0; i < numSteps; i++){
+                            totalFactor += pow(spacingRatio, i);
+                        }
+
+                        float currentDistance = 0;
+                        float density = 0;
+                        for(int i = 0; i < numSteps; i++){
+                            float3 pos = startPos + rayDir * currentDistance;
+
+                            density += tex2D(_CloudCoverage, remap_f2(pos.xz, -_MaxViewDistance, _MaxViewDistance, 0.0, 1.0)).r;
+
+                            float segment = dist * pow(spacingRatio, i) / totalFactor;
+                            currentDistance += segment + 3.0f;
+                        }
+
+                        return lerp(mainCol, float4(1.0, 1.0, 1.0, 1.0), density * 100);
                     }
                 }
                 

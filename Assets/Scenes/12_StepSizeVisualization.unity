@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 23598670}
   - component: {fileID: 23598669}
   - component: {fileID: 23598668}
+  - component: {fileID: 23598671}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -215,6 +216,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &23598671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23598667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4a54756a816894a91c2d7824329325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveNormalSpeed: 10
+  moveFastSpeed: 20
+  rotationSpeed: 2000
 --- !u!1 &80689159 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8669570873837645068, guid: fff3509650f4ea04f979638af280379f, type: 3}
@@ -230,15 +246,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -317,15 +333,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2461093355227281808, guid: fff3509650f4ea04f979638af280379f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -422,6 +438,8 @@ MonoBehaviour:
   farStepSizeOffset: 60
   stepAdjustmentDistance: 16384
   atmosphereDimensions: {x: 100, y: 500}
+  stepMode: 1
+  spacingRatio: 1.5
 --- !u!4 &1262331496
 Transform:
   m_ObjectHideFlags: 0

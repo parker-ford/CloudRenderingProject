@@ -47,6 +47,7 @@ Shader "Parker/PerlinSphere"
 
             fixed4 frag (v2f i) : SV_Target
             {
+
                 //Get ray origin and direction
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();

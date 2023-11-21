@@ -12,10 +12,13 @@ public class TestAtmosphere : MonoBehaviour
 
     public float densityMultiplier = 1;
 
+    public float distanceMultiplier = 0;
+
     public enum TestMode {
         renderTestTexture = 1,
         renderCloudCoverageTexture = 2,
-        rednerCloudCoverage = 3
+        rednerCloudCoverage = 3,
+        renderCurvedAtmosphere = 4,
     }
 
     public bool infinitePlane = false;
@@ -49,5 +52,6 @@ public class TestAtmosphere : MonoBehaviour
         mat.SetInt("_TestMode", (int)testMode);
         mat.SetFloat("_DensityMultiplier", densityMultiplier);
         mat.SetInt("_InfinitePlane", infinitePlane ? 1 : 0);
+        mat.SetFloat("_DistanceMultiplier", distanceMultiplier);
     }
 }

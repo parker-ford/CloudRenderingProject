@@ -1,17 +1,17 @@
 //TODO: Only include this if not already included
 #include "./shaderUtils.cginc"
 
-int seedGen_i3(int3 input){
-    int seed1 = input.x * 2654435761;
-    int seed2 = input.y * 2246822519;
-    int seed3 = input.z * 3266489917;
+int seedGen_ui3(int3 input){
+    int seed1 = input.x * 2654435761u;
+    int seed2 = input.y * 2246822519u;
+    int seed3 = input.z * 3266489917u;
 
     return seed1 + seed2 + seed3;
 }
 
-int seedGen_i2(int2 input){
-    int seed1 = input.x * 2654435761;
-    int seed2 = input.y * 2246822519;
+int seedGen_ui2(int2 input){
+    int seed1 = input.x * 2654435761u;
+    int seed2 = input.y * 2246822519u;
 
     return seed1 + seed2;
 }
@@ -39,9 +39,9 @@ float2 gradientVector_2D(float2 input){
         float2(-1.0, 0.0),
     };
 
-    int seed = seedGen_i2(int2(input.x * _ScreenParams.x, input.y * _ScreenParams.y));
-    int r = pcgHash_i(seed);
-    r = pcgHash_i(r);
+    int seed = seedGen_ui2(int2(input.x * _ScreenParams.x, input.y * _ScreenParams.y));
+    int r = pcgHash_ui(seed);
+    r = pcgHash_ui(r);
     float2 v = vectors[r & 7];
 
     return v;
@@ -64,9 +64,9 @@ float3 gradientVector_3D(float3 input){
     };
 
     //TODO: May need to fix this. Assumes all dimensions are the same
-    int seed = seedGen_i3(int3(input.x * _ScreenParams.x, input.y * _ScreenParams.x, input.z * _ScreenParams.x));
-    int r = pcgHash_i(seed);
-    r = pcgHash_i(r);
+    int seed = seedGen_ui3(int3(input.x * _ScreenParams.x, input.y * _ScreenParams.x, input.z * _ScreenParams.x));
+    int r = pcgHash_ui(seed);
+    r = pcgHash_ui(r);
 
     float3 v = vectors[r % 12];
 
@@ -186,4 +186,9 @@ float perlinNoise_3D(float3 p, float cellSize){
     float n = lerp(n5, n6, fz);
 
     return n;
+}
+
+float whiteNoise_2D(float2 p, uint seedOffset){
+    int seed = seedGen_ui2(uint2(uint(p.x * _ScreenParams.x), uint(p.y * _ScreenParams.y)));
+    return normalize_ui(pcgHash_ui(seed * seedOffset));
 }
