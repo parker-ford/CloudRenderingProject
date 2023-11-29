@@ -7,12 +7,16 @@
 
 float _CameraAspect;
 float _CameraFOV;
+int _MarchSteps;
+int _RayPerPixel;
 int _UsingRandom;
 
 float3 getPixelRayInWorld(float2 uv){
 
     //Shift uv by random amount
-    uv = float2(uv.x + (1. / _ScreenParams.x) * whiteNoise_2D(uv, uint(_Time.y * 60u + 10000u)), uv.y - (1. / _ScreenParams.y) * whiteNoise_2D(uv, uint(_Time.y * 60u + 8542u)));
+    if(_UsingRandom){
+        uv = float2(uv.x + (1. / _ScreenParams.x) * random(), uv.y + (1. / _ScreenParams.y) * random());
+    }
 
     //Convert to screen space uv (-1 - 1)
     uv = remap_f2(uv, 0, 1, -1, 1);

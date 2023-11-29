@@ -53,22 +53,19 @@ Shader "Parker/AtmosphereTest"
             float _AtmosphereHeight;
             float _DensityMultiplier;
             float _DistanceMultiplier;
-
-            int _NumSteps;
-            int _TestMode;
             int _InfinitePlane;
-            int _PixelsPerRay;
+            int _TestMode;
 
             float4 renderTestTexture(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 float dist = _AtmosphereHeight;
-                float distPerStep = dist / (float)_NumSteps;
+                float distPerStep = dist / (float)_MarchSteps;
 
                 float4 color = tex2D(_MainTex, i.uv);
 
             
-                for(int j = 0; j < _NumSteps; j++){
+                for(int j = 0; j < _MarchSteps; j++){
                     intersectData planeIntersect;
                     if(_InfinitePlane){
                         planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal);
@@ -85,7 +82,7 @@ Shader "Parker/AtmosphereTest"
                         samplePos.y = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
                         sampleCol = tex2D(_TestTex, samplePos);
                     }
-                    color = lerp(color, sampleCol, 1.0 / (float) _NumSteps);
+                    color = lerp(color, sampleCol, 1.0 / (float) _MarchSteps);
                 }
                 return color;
             }
@@ -94,11 +91,11 @@ Shader "Parker/AtmosphereTest"
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 float dist = _AtmosphereHeight;
-                float distPerStep = dist / (float)_NumSteps;
+                float distPerStep = dist / (float)_MarchSteps;
 
                 float4 color = tex2D(_MainTex, i.uv);
 
-                for(int j = 0; j < _NumSteps; j++){
+                for(int j = 0; j < _MarchSteps; j++){
                     intersectData planeIntersect;
                     if(_InfinitePlane){
                         planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition + float3(0, (float)j * distPerStep, 0), _PlaneNormal);
@@ -115,7 +112,7 @@ Shader "Parker/AtmosphereTest"
                         sampleCol = tex2D(_CloudCoverage, samplePos);
                     }
                     
-                    color = lerp(color, sampleCol, 1.0 / (float) _NumSteps);
+                    color = lerp(color, sampleCol, 1.0 / (float) _MarchSteps);
                 }
                 return color;
 
@@ -125,7 +122,7 @@ Shader "Parker/AtmosphereTest"
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 float dist = _AtmosphereHeight;
-                float distPerStep = dist / (float)_NumSteps;
+                float distPerStep = dist / (float)_MarchSteps;
                 float4 mainColor = tex2D(_MainTex, i.uv);
                 float4 cloudColor = float4(1,1,1,0);
                 float densitySample = 0;
@@ -137,7 +134,7 @@ Shader "Parker/AtmosphereTest"
                     planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal, _PlaneUp, _PlaneWidth, _PlaneHeight);
                 }
 
-                for(int j = 0; j < _NumSteps; j++){
+                for(int j = 0; j < _MarchSteps; j++){
                     if(planeIntersect.intersects){
 
                         float3 pos = rayOrigin + rayDir * (planeIntersect.intersectPoints.x + distPerStep * j + whiteNoise_2D(i.uv, 1) * distPerStep);
@@ -148,7 +145,7 @@ Shader "Parker/AtmosphereTest"
                     }
                 }
 
-                return lerp(mainColor, cloudColor, densitySample * 1.0/(float)_NumSteps * _DensityMultiplier);
+                return lerp(mainColor, cloudColor, densitySample * 1.0/(float)_MarchSteps * _DensityMultiplier);
             }
 
             float4 renderCurvedAtmosphere(v2f i){
@@ -189,11 +186,11 @@ Shader "Parker/AtmosphereTest"
             fixed4 frag (v2f i) : SV_Target
             {
                 float4 color = 0;
-                for(int j = 0; j < _PixelsPerRay; j++){
+                for(int j = 0; j < _RayPerPixel; j++){
                     color += getRayColor(i);
                 }
 
-                return color / (float)_PixelsPerRay;
+                return color / (float)_RayPerPixel;
             }
             ENDCG
         }

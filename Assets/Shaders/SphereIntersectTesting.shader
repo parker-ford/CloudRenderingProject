@@ -45,8 +45,6 @@ Shader "Parker/SphereIntersectTesting"
             float3 _SphereCenter;
             float _SphereRadius;
             int _TestMode;
-            int _MarchSteps;
-            int _RayPerPixel;
 
 
             float4 getRayColor(v2f i){

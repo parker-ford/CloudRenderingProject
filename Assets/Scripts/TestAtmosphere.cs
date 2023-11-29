@@ -7,13 +7,9 @@ public class TestAtmosphere : MonoBehaviour
 {
     public Material mat;
     public float atmosphereHeight = 100;
-
-    public int numSteps = 1;
-    public int pixelsPerRay = 1;
-
     public float densityMultiplier = 1;
-
     public float distanceMultiplier = 0;
+    public GameObject plane;
 
     public enum TestMode {
         renderTestTexture = 1,
@@ -34,12 +30,12 @@ public class TestAtmosphere : MonoBehaviour
             renderer.enabled = false;
         }
 
-        mat.SetVector("_PlanePosition", transform.position);
-        mat.SetVector("_PlaneNormal", transform.forward);
-        mat.SetVector("_PlaneRight", -transform.right);
-        mat.SetVector("_PlaneUp", transform.up);
-        mat.SetFloat("_PlaneHeight", transform.localScale.y / 2.0f);
-        mat.SetFloat("_PlaneWidth", transform.localScale.x / 2.0f);
+        mat.SetVector("_PlanePosition", plane.transform.position);
+        mat.SetVector("_PlaneNormal", plane.transform.forward);
+        mat.SetVector("_PlaneRight", -plane.transform.right);
+        mat.SetVector("_PlaneUp", plane.transform.up);
+        mat.SetFloat("_PlaneHeight", plane.transform.localScale.y / 2.0f);
+        mat.SetFloat("_PlaneWidth", plane.transform.localScale.x / 2.0f);
             
             
             
@@ -49,11 +45,9 @@ public class TestAtmosphere : MonoBehaviour
     void Update()
     {
         mat.SetFloat("_AtmosphereHeight", atmosphereHeight);
-        mat.SetInt("_NumSteps", numSteps);
         mat.SetInt("_TestMode", (int)testMode);
         mat.SetFloat("_DensityMultiplier", densityMultiplier);
         mat.SetInt("_InfinitePlane", infinitePlane ? 1 : 0);
         mat.SetFloat("_DistanceMultiplier", distanceMultiplier);
-        mat.SetInt("_PixelsPerRay", pixelsPerRay);
     }
 }
