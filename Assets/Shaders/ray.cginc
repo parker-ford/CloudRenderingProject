@@ -7,6 +7,7 @@
 
 float _CameraAspect;
 float _CameraFOV;
+int _UsingRandom;
 
 float3 getPixelRayInWorld(float2 uv){
 
@@ -197,6 +198,18 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
 
     return result;
 
+}
+
+float3 getMarchPosition(float3 origin, float3 direction, float intersectionDist, float iteration, float distPerStep){
+    float3 pos;
+    if(_UsingRandom > 0){
+        pos = origin + direction * (intersectionDist + (distPerStep * iteration) + (random() * distPerStep));
+    }
+    else{
+        pos = origin + direction * (intersectionDist + (distPerStep * iteration));
+    }
+
+    return pos;
 }
 
 

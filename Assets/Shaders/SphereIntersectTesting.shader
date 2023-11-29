@@ -84,7 +84,7 @@ Shader "Parker/SphereIntersectTesting"
                         float dist = sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x;
                         float distPerStep = dist / (float)_MarchSteps;
                         for(int j = 0; j < _MarchSteps; j++){
-                            float3 pos = rayOrigin + rayDir * (sphereIntersect.intersectPoints.x + (distPerStep * j) + (random() * distPerStep));
+                            float3 pos = getMarchPosition(rayOrigin, rayDir, sphereIntersect.intersectPoints.x, float(j), distPerStep);
                             float distToCenter = length(_SphereCenter - pos);
                             if(distToCenter < _SphereRadius * 0.2){
                                 color += float4(1, 0, 0, 1);

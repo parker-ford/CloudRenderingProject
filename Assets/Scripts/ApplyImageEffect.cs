@@ -3,19 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ApplyGeneralImageEffectShader : MonoBehaviour
+public class ApplyImageEffect : MonoBehaviour
 {
-    public Shader imageEffect;
-    private Material material;
+    public Material material;
 
     void Start()
     {
-        Debug.Assert(imageEffect != null);
-
-        material = new Material(imageEffect)
-        {
-            hideFlags = HideFlags.HideAndDontSave
-        };
+        Debug.Assert(material != null);
         
     }
 
