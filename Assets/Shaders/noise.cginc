@@ -195,7 +195,8 @@ uint seedCount = 0;
 float whiteNoise_2D(float2 p, uint seedOffset){
     int seed = seedGen_ui2(uint2(uint(p.x * _ScreenParams.x), uint(p.y * _ScreenParams.y)));
     seedCount++;
-    return normalize_ui(pcgHash_ui(seed * seedOffset + seedCount));
+    //return normalize_ui(pcgHash_ui(seed * seedOffset + seedCount));
+    return normalize_ui(pcgHash_ui(seed * seedCount));
 }
 
 #endif

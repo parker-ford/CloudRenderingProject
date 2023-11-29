@@ -140,7 +140,7 @@ Shader "Parker/AtmosphereTest"
                 for(int j = 0; j < _NumSteps; j++){
                     if(planeIntersect.intersects){
 
-                        float3 pos = rayOrigin + rayDir * (planeIntersect.intersectPoints.x + distPerStep * j);
+                        float3 pos = rayOrigin + rayDir * (planeIntersect.intersectPoints.x + distPerStep * j + whiteNoise_2D(i.uv, 1) * distPerStep);
                         float2 samplePos;
                         samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
                         samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);

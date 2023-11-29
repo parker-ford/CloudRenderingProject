@@ -51,12 +51,21 @@ Shader "Parker/SphereIntersectTesting"
 
             float4 getRayColor(v2f i){
 
+                setPixelID(i.uv);
                 float4 color = float4(0.0, 0.0, 0.0, 1.0);
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 intersectData sphereIntersect = sphereIntersection(rayOrigin, rayDir, _SphereCenter, _SphereRadius);
                 
                 if(sphereIntersect.intersects){
+                    if(_TestMode == 0){
+                        float r = 0;
+                        for(int j = 0; j < _RayPerPixel; j++){
+                            r += random();
+                        }
+                        r /= _RayPerPixel;
+                        return float4(r,r,r,1.0);
+                    }
                     if(_TestMode == 1){
                         color = float4(1.0, 0.0, 0.0, 1.0);
                     }
@@ -75,7 +84,7 @@ Shader "Parker/SphereIntersectTesting"
                         float dist = sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x;
                         float distPerStep = dist / (float)_MarchSteps;
                         for(int j = 0; j < _MarchSteps; j++){
-                            float3 pos = rayOrigin + rayDir * (sphereIntersect.intersectPoints.x + distPerStep * j);
+                            float3 pos = rayOrigin + rayDir * (sphereIntersect.intersectPoints.x + (distPerStep * j) + (random() * distPerStep));
                             float distToCenter = length(_SphereCenter - pos);
                             if(distToCenter < _SphereRadius * 0.2){
                                 color += float4(1, 0, 0, 1);

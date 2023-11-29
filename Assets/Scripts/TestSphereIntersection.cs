@@ -8,6 +8,7 @@ public class TestSphereIntersection : MonoBehaviour
     public bool overlayOriginal = false;
 
     public enum TestMode {
+        randomTest = 0,
         shapeTest = 1,
         frontIntersectTest = 2,
         backIntersectTest = 3,

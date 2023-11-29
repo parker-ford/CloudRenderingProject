@@ -4,6 +4,23 @@
 
 #define PI 3.14159265359
 #define MAX_INT 2147483647
+#define MAX_UINT 4294967295
+
+uint g_pixelID = 0u;
+
+//TODO: Add source for this
+uint pcgHash_ui(uint state){
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    return (word >> 22u) ^ word;
+}
+
+void setPixelID(float2 uv){
+    float2 pixelPosition = float2(uv.x * _ScreenParams.x, uv.y * _ScreenParams.y);
+    uint x = uint(pixelPosition.x);
+    uint y = uint(pixelPosition.y);
+    g_pixelID = pcgHash_ui(x) + pcgHash_ui(y);
+
+}
 
 float remap_f(float value, float in_min, float in_max, float out_min, float out_max){
     return out_min + (((value - in_min) / (in_max - in_min)) * (out_max - out_min));
@@ -29,23 +46,22 @@ float tan_d(float deg){
     return tan(rad);
 }
 
-//TODO: Add source for this
-uint pcgHash_ui(uint state){
-    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
-    return (word >> 22u) ^ word;
+float normalize_ui(uint input){
+    return float(input) / 4294967295.0;
 }
 
-float random(int seed){
-    return abs(pcgHash_ui(seed)) / MAX_INT;
+uint randomIterations = 12345u;
+float random(){
+    randomIterations++;
+    return normalize_ui(pcgHash_ui(g_pixelID + randomIterations));
 }
 
 float fract(float input){
     return input - floor(input);
 }
 
-float normalize_ui(uint input){
-    return float(input) / 4294967295.0;
-}
+
+
 
 #endif
 

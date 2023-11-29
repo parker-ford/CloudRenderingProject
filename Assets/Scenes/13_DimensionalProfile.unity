@@ -263,7 +263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: 6d2a8a8a95e92804f891a9ad8f37966f, type: 2}
   atmoshpereDimensions: {x: 300, y: 800}
-  maxViewDistance: 5000
+  maxViewDistance: 1000
 --- !u!1 &1475766951
 GameObject:
   m_ObjectHideFlags: 0
