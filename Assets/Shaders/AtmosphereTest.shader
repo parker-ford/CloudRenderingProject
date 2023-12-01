@@ -76,7 +76,8 @@ Shader "Parker/AtmosphereTest"
 
                     float4 sampleCol = color;
                     if(planeIntersect.intersects){
-                        float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
+                        //float3 pos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
+                        float3 pos = getMarchPosition(rayOrigin, rayDir,planeIntersect.intersectPoints.x, 0 , 0 );
                         float2 samplePos;
                         samplePos.x = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
                         samplePos.y = remap_f(dot(pos - _PlanePosition +  float3(0, (float)j * distPerStep, 0), _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
@@ -125,7 +126,7 @@ Shader "Parker/AtmosphereTest"
                 float distPerStep = dist / (float)_MarchSteps;
                 float4 mainColor = tex2D(_MainTex, i.uv);
                 float4 cloudColor = float4(1,1,1,0);
-                float densitySample = 0;
+                float coverageDensity = 0;
                 intersectData planeIntersect;
                 if(_InfinitePlane){
                     planeIntersect = planeIntersection(rayOrigin, rayDir, _PlanePosition, _PlaneNormal);
@@ -137,15 +138,16 @@ Shader "Parker/AtmosphereTest"
                 for(int j = 0; j < _MarchSteps; j++){
                     if(planeIntersect.intersects){
 
-                        float3 pos = rayOrigin + rayDir * (planeIntersect.intersectPoints.x + distPerStep * j + whiteNoise_2D(i.uv, 1) * distPerStep);
+                        float3 pos = getMarchPosition(rayOrigin, rayDir, planeIntersect.intersectPoints.x , float(j), distPerStep);
                         float2 samplePos;
                         samplePos.x = remap_f(dot(pos - _PlanePosition, _PlaneRight) , -_PlaneWidth, _PlaneWidth, 0.0, 1.0);
                         samplePos.y = remap_f(dot(pos - _PlanePosition, _PlaneUp), -_PlaneHeight, _PlaneHeight, 0.0, 1.0);
-                        densitySample += tex2D(_CloudCoverage, samplePos).x;
+                        float coverageDensitySample = tex2D(_CloudCoverage, samplePos).x;
+                        coverageDensity += (1 - coverageDensity) * coverageDensitySample;
                     }
                 }
 
-                return lerp(mainColor, cloudColor, densitySample * 1.0/(float)_MarchSteps * _DensityMultiplier);
+                return lerp(mainColor, cloudColor, coverageDensity);
             }
 
             float4 renderCurvedAtmosphere(v2f i){
