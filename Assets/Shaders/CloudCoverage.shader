@@ -38,7 +38,6 @@ Shader "Parker/CloudCoverage"
                 return o;
             }
 
-            sampler2D _MainTex;
             float _NodeSize1;
             float _NodeSize2;
             float _NodeSize3;
@@ -52,20 +51,23 @@ Shader "Parker/CloudCoverage"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float noise = 0;
-                // noise += perlinNoise_2D(i.uv, _NodeSize1) * _NodeWeight1;
-                // noise += perlinNoise_2D(i.uv, _NodeSize2) * _NodeWeight2;
-                // noise += perlinNoise_2D(i.uv, _NodeSize3) * _NodeWeight3;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize1) * _NodeWeight1;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize2) * _NodeWeight2;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize3) * _NodeWeight3;
-                noise = (noise + 1.0) / 2.0;
-                noise *= _NoiseMultiplier;
 
-                float mask = step(_NoiseThreshold, noise);
-                noise *= mask;
+                return float4(perlinNoise_3D(float3(i.uv, 0), 4), 0.0, 0.0, 1.0);
+
+                // float noise = 0;
+                // // noise += perlinNoise_2D(i.uv, _NodeSize1) * _NodeWeight1;
+                // // noise += perlinNoise_2D(i.uv, _NodeSize2) * _NodeWeight2;
+                // // noise += perlinNoise_2D(i.uv, _NodeSize3) * _NodeWeight3;
+                // noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize1) * _NodeWeight1;
+                // noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize2) * _NodeWeight2;
+                // noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize3) * _NodeWeight3;
+                // noise = (noise + 1.0) / 2.0;
+                // noise *= _NoiseMultiplier;
+
+                // float mask = step(_NoiseThreshold, noise);
+                // noise *= mask;
                 
-                return fixed4(noise, noise, noise, 1.0);
+                // return fixed4(noise, noise, noise, 1.0);
             }
             ENDCG
         }

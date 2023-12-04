@@ -187,6 +187,7 @@ Shader "Parker/AtmosphereTest"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                setPixelID(i.uv);
                 float4 color = 0;
                 for(int j = 0; j < _RayPerPixel; j++){
                     color += getRayColor(i);

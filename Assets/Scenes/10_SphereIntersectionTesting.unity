@@ -295,7 +295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveNormalSpeed: 10
   moveFastSpeed: 20
-  rotationSpeed: 2000
+  rotationSpeed: 500
 --- !u!114 &751039983
 MonoBehaviour:
   m_ObjectHideFlags: 0

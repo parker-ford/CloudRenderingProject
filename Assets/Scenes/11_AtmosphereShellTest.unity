@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
-  atmosphereHeight: 100
+  atmosphereHeight: 1
   densityMultiplier: 1
   distanceMultiplier: 0
   plane: {fileID: 122719302}
