@@ -67,8 +67,8 @@ float3 gradientVector_3D(float3 input){
     };
 
     //TODO: May need to fix this. Assumes all dimensions are the same
-    int seed = seedGen_ui3(int3(input.x * _ScreenParams.x, input.y * _ScreenParams.x, input.z * _ScreenParams.x));
-    int r = pcgHash_ui(seed);
+    uint seed = seedGen_ui3(uint3(input.x * _ScreenParams.x, input.y * _ScreenParams.x, input.z * _ScreenParams.x));
+    uint r = pcgHash_ui(seed);
     r = pcgHash_ui(r);
 
     float3 v = vectors[r % 12];
