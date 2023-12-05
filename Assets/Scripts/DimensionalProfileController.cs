@@ -6,6 +6,8 @@ public class DimensionalProfileController : MonoBehaviour
 {
     public Material mat;
     public RenderTexture cloudCoverageRederTexture;
+    public RenderTexture cloudTypeRenderTexture;
+    public RenderTexture cloudGradientRenderTexture;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,5 +18,7 @@ public class DimensionalProfileController : MonoBehaviour
     void Update()
     {
         mat.SetTexture("_CloudCoverage", cloudCoverageRederTexture);
+        mat.SetTexture("_CloudType", cloudTypeRenderTexture);
+        mat.SetTexture("_CloudGradient", cloudGradientRenderTexture);
     }
 }
