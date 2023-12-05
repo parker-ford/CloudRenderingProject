@@ -5,8 +5,7 @@ using UnityEngine;
 public class DimensionalProfileController : MonoBehaviour
 {
     public Material mat;
-    public Vector2 atmoshpereDimensions;
-    public float maxViewDistance;
+    public RenderTexture cloudCoverageRederTexture;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +15,6 @@ public class DimensionalProfileController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mat.SetVector("_AtmosphereDimensions", atmoshpereDimensions);
-        mat.SetFloat("_MaxViewDistance", maxViewDistance);
+        mat.SetTexture("_CloudCoverage", cloudCoverageRederTexture);
     }
 }

@@ -52,6 +52,17 @@ Shader "Parker/DimensionalProfile"
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
+                float maxDist = 5000;
+
+                intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, float3(0,100,0), float3(0,-1,0));
+
+                if(planeIntersect.intersects){
+                   float3 startPos = rayOrigin + rayDir * planeIntersect.intersectPoints.x;
+                   if(length(startPos) < maxDist){
+                    float2 samplePos = remap_f2(startPos.xz, -512, 512, 0, 1);
+                    return tex2D(_CloudCoverage, samplePos);
+                   }
+                }
 
                 return mainCol;
             }

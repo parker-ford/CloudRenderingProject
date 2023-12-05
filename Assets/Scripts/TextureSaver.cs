@@ -38,7 +38,8 @@ public class TextureSaver : MonoBehaviour {
             Texture2D finalTexture = new Texture2D(finalTextureSize, finalTextureSize, TextureFormat.RGBA32, false);
             for(int y = 0; y < finalTexture.height; y++){
                 for(int x = 0; x < finalTexture.width; x++){
-                    Color color = texture2D.GetPixelBilinear((float)x / finalTexture.width, (float)y / finalTexture.height);
+                    float invertedY = 1f - (float)y / finalTexture.height;
+                    Color color = texture2D.GetPixelBilinear((float)x / finalTexture.width, invertedY);
                     finalTexture.SetPixel(x,y,color);
                 }
             }
@@ -46,7 +47,11 @@ public class TextureSaver : MonoBehaviour {
 
             byte[] bytes = finalTexture.EncodeToPNG();
             string dateTimeString = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            System.IO.File.WriteAllBytes(Application.dataPath + "/Textures/" + textureName + "/" + textureName + "_" + dateTimeString + ".png", bytes);
+
+            string folderPath = Application.dataPath + "/Textures/" + textureName;
+            System.IO.Directory.CreateDirectory(folderPath);
+
+            System.IO.File.WriteAllBytes(folderPath + "/" + textureName + "_" + dateTimeString + ".png", bytes);
             Debug.Log("Saved current Texture");
 
         } 

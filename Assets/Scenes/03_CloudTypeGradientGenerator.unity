@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03a39db457814de4f8b839f2d3eb5738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureName: CloudTypeGradient
+  textureName: CloudGradient
   imageEffect: {fileID: 2100000, guid: 5f794ab8ad080c24c9b019f8c41640aa, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
