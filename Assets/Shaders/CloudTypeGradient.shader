@@ -16,6 +16,7 @@ Shader "Parker/CloudTypeGradient"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "shaderUtils.cginc"
 
             struct appdata
             {
@@ -41,8 +42,9 @@ Shader "Parker/CloudTypeGradient"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float col = 1.0 - sin(i.uv.y);
-                col *= col * col * col * col * col * col * col + 0.1;
+
+
+                float col = lerp(1,0, i.uv.y / i.uv.x);
 
                 return fixed4(col, col, col, 1.0);
             }

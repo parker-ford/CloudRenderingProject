@@ -346,7 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 6d2a8a8a95e92804f891a9ad8f37966f, type: 2}
   useRayRandomization: 1
-  useIncreasingMarchIntervals: 0
+  useIncreasingMarchIntervals: 1
   marchSteps: 10
   raysPerPixel: 5
 --- !u!4 &360015926
@@ -378,8 +378,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: 6d2a8a8a95e92804f891a9ad8f37966f, type: 2}
   cloudCoverageRederTexture: {fileID: 8400000, guid: f73c6fc75168457449ed75b77174b40d, type: 2}
-  cloudTypeRenderTexture: {fileID: 8400000, guid: cafc63450b11eb64491baf57b5aa1c58, type: 2}
+  cloudTypeRenderTexture: {fileID: 8400000, guid: f73c6fc75168457449ed75b77174b40d, type: 2}
   cloudGradientRenderTexture: {fileID: 8400000, guid: 514bfeb14e7bd8d448de8eb21e5bd872, type: 2}
+  useCloudGradient: 1
+  viewCloudCoverageTexture: 0
 --- !u!1 &761734765
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,8 +671,9 @@ MonoBehaviour:
   nodeWeight1: 0.6
   nodeWeight2: 0.3
   nodeWeight3: 0.1
-  noiseThreshold: 0.8
-  noiseMultiplier: 1.2
+  noiseThreshold: 0
+  noiseShift: 0
+  noiseMultiplier: 1
   animate: 0
   animateSpeed: 0.2
 --- !u!4 &1116220779

@@ -23,6 +23,8 @@ Shader "Parker/DimensionalProfile"
 
             #define ATMOSPHERE_LOWER_BOUND 100.0
             #define ATMOSPHERE_UPPER_BOUND 300.0
+            #define USE_CLOUD_GRADIENT_BIT 1
+            #define VIEW_COVERAGE_TEXTURE_BIT 2
 
             struct appdata
             {
@@ -48,6 +50,8 @@ Shader "Parker/DimensionalProfile"
             sampler2D _CloudCoverage;
             sampler2D _CloudType;
             sampler2D _CloudGradient;
+
+            int _DimensionalProfileOptions;
 
             fixed4 getRayColor (v2f i)
             {
@@ -75,10 +79,18 @@ Shader "Parker/DimensionalProfile"
                             samplePos.x = remap_f(pos.x, -512.0, 512.0, 0.0, 1.0);
                             samplePos.z = remap_f(pos.z, -512.0, 512.0, 0.0, 1.0);
                             samplePos.y = remap_f(pos.y, ATMOSPHERE_LOWER_BOUND, ATMOSPHERE_UPPER_BOUND, 0.0, 1.0);
+                            if(checkBit(_DimensionalProfileOptions, VIEW_COVERAGE_TEXTURE_BIT)){
+                                return tex2D(_CloudCoverage, samplePos.xz);
+                            }
                             float coverageDensitySample = tex2D(_CloudCoverage, samplePos.xz).x;
                             float typeSample = tex2D(_CloudType, samplePos.xz).x;
                             float heightDensitySample = tex2D(_CloudGradient, float2(typeSample, samplePos.y));
-                            cloudDensity += (1 - cloudDensity) * coverageDensitySample * heightDensitySample;
+                            if(checkBit(_DimensionalProfileOptions, USE_CLOUD_GRADIENT_BIT)){
+                                cloudDensity += (1 - cloudDensity) * coverageDensitySample * heightDensitySample;
+                            }
+                            else{
+                                cloudDensity += (1 - cloudDensity) * coverageDensitySample;
+                            }
                         }
 
                         return lerp(mainCol, cloudCol, cloudDensity);
