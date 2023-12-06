@@ -7,9 +7,8 @@ public class BeersLawTest : MonoBehaviour
     public Material mat;
     public GameObject myLight;
     public float density = 0.1f;
-    public int densitySteps = 1;
-    public int lightSteps = 1;
     public bool animateLight = false;
+    public Transform sphere;
 
     // Start is called before the first frame update
     void Start()
@@ -28,12 +27,11 @@ public class BeersLawTest : MonoBehaviour
             myLight.transform.position = new Vector3(Mathf.Cos(Time.time), myLight.transform.position.y, Mathf.Sin(Time.time));
         }
 
-        mat.SetVector("_SpherePosition", transform.position);
-        mat.SetFloat("_SphereRadius", transform.localScale.y / 2.0f);
+        mat.SetVector("_SphereCenter", sphere.transform.position);
+        mat.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2.0f);
         mat.SetFloat("_SphereDensity", density);
-        mat.SetInt("_DensitySteps", densitySteps);
         mat.SetVector("_LightDirection", myLight.transform.position.normalized);
-        //mat.SetVector("_LightDirection", new Vector3(Mathf.Cos(Time.time), myLight.transform.position.y, Mathf.Sin(Time.time)));
-        mat.SetInt("_LightSteps", lightSteps);
+        // mat.SetVector("_LightDirection", -myLight.transform.position);
+
     }
 }

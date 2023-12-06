@@ -40,69 +40,63 @@ Shader "Parker/BeersSphere"
 
             sampler2D _MainTex;
 
-            float3 _SpherePosition;
+            float3 _SphereCenter;
             float _SphereRadius;
             float _SphereDensity;
             int _DensitySteps;
             int _LightSteps;
-
             float3 _LightDirection;
 
-            float densityToLight(float3 pos){
-                float dist = 2.0;
-                float distPerStep = dist / (float)_LightSteps;
-
-                float distToEdge = 0;
+            float getLightInformation(float3 origin){
                 float density = 0;
-
-                for(int j = 0; j < _LightSteps; j++){
-                    float3 newPos = pos + _LightDirection * distPerStep * (float) j;
-                    if(length(newPos - _SpherePosition) < _SphereRadius){
-                        density += _SphereDensity;
+                for(int i = 0; i < 5; i++){
+                    float3 pos = getMarchPosition(origin, _LightDirection, 0, float(i), 0.2f);
+                    if(length(pos - _SphereCenter) < _SphereRadius){
+                        density += (1 - density) * _SphereDensity;
                     }
                 }
 
                 return density;
-
             }
+
+
+            float4 getRayColor(v2f i){
+                float4 mainCol = tex2D(_MainTex, i.uv);
+                float4 color = float4(1.0, 0.0, 0.0, 1.0);
+                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayOrigin = getCameraOriginInWorld();
+                intersectData sphereIntersect = sphereIntersection(rayOrigin, rayDir, _SphereCenter, _SphereRadius);
+                if(sphereIntersect.intersects){
+                    float dist = sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x;
+                    // float distPerStep = dist / (float)_MarchSteps;
+                    float distPerStep = 0.1;
+                    float density = 0;
+                    float light = 0;
+                    float totalOcularDepth = 0;
+                    for(int j = 0; j < _MarchSteps; j++){
+                        float3 pos = getMarchPosition(rayOrigin, rayDir, sphereIntersect.intersectPoints.x, float(j), distPerStep);
+                        if(length(pos - _SphereCenter) < _SphereRadius){
+                            density += (1 - density) * _SphereDensity;
+                            light += (1 - light) * getLightInformation(pos);
+                        }
+                    }
+                    // return float4(exp(-light), 0, 0, 1);
+                    return lerp(mainCol, color * exp(-light), density);
+                }
+
+                return mainCol;
+            }
+
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float3 rayDir = getPixelRayInWorld(i.uv);
-                float3 rayOrigin = getCameraOriginInWorld();
-                intersectData sphereIntersect = sphereIntersection(rayOrigin, rayDir, _SpherePosition, _SphereRadius);
-                if(sphereIntersect.intersects){
-
-                    float dist = length(sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x);
-                    float distPerStep = dist / (float) _DensitySteps;
-                    float sampledDensity = 1.0;
-                    float totalLight = 0.0;
-
-                    for(int j = 0; j < _DensitySteps; j++){
-                        float3 pos = rayOrigin + rayDir * (sphereIntersect.intersectPoints.x + distPerStep * (float) j);
-                        sampledDensity *=  exp(-(dist/(float)_DensitySteps) * _SphereDensity);
-                        float lightAmount = densityToLight(pos);
-                        totalLight += lightAmount * (((float) _DensitySteps - (float) j)/ (float)_DensitySteps);
-                    }
-                    float4 color = float4(1,0,0,1) * exp(totalLight);
-                    return lerp(color, tex2D(_MainTex, i.uv), sampledDensity);
+                setPixelID(i.uv);
+                float4 color = float4(0,0,0,0);
+                for(int j = 0; j < _RayPerPixel; j++){
+                    color += getRayColor(i);
                 }
+                return color / (float)_RayPerPixel;
 
-                return tex2D(_MainTex, i.uv);
-
-                // float3 origin = float3(0,0.1,0);
-                // float3 direction = float3(0,1,0);
-
-                // float3 c = float3(0,0,0);
-                // float r = 0.5;
-
-                // intersectData sphereIntersect = sphereIntersection(origin, direction, c, r);
-                // if(sphereIntersect.intersects){
-                //     // return float4(1,0,0,1);
-                //     return float4(origin + direction * sphereIntersect.intersectPoints.x, 1.0);
-                // }
-
-                // return float4(1,0,1,1);
             }
             ENDCG
         }
