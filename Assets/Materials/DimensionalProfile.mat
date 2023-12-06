@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CloudType:
-        m_Texture: {fileID: 8400000, guid: f73c6fc75168457449ed75b77174b40d, type: 2}
+        m_Texture: {fileID: 8400000, guid: cafc63450b11eb64491baf57b5aa1c58, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:

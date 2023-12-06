@@ -378,7 +378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: 6d2a8a8a95e92804f891a9ad8f37966f, type: 2}
   cloudCoverageRederTexture: {fileID: 8400000, guid: f73c6fc75168457449ed75b77174b40d, type: 2}
-  cloudTypeRenderTexture: {fileID: 8400000, guid: f73c6fc75168457449ed75b77174b40d, type: 2}
+  cloudTypeRenderTexture: {fileID: 8400000, guid: cafc63450b11eb64491baf57b5aa1c58, type: 2}
   cloudGradientRenderTexture: {fileID: 8400000, guid: 514bfeb14e7bd8d448de8eb21e5bd872, type: 2}
   useCloudGradient: 1
   viewCloudCoverageTexture: 0
@@ -641,8 +641,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1116220779}
-  - component: {fileID: 1116220778}
   - component: {fileID: 1116220780}
+  - component: {fileID: 1116220778}
   - component: {fileID: 1116220782}
   - component: {fileID: 1116220781}
   m_Layer: 0
@@ -738,6 +738,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: 7d933df770dea2e4c9b093653b0bcec0, type: 2}
+  nodeSize1: 8
+  nodeSize2: 15
+  nodeSize3: 20
+  nodeWeight1: 0.6
+  nodeWeight2: 0.3
+  nodeWeight3: 0.1
+  noiseThreshold: 0
+  noiseShift: 0
+  noiseMultiplier: 1
+  animate: 0
+  animateSpeed: 0.2
 --- !u!1 &1405180059
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,7 +16,8 @@ Shader "Parker/CloudType"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-            #include "./shaderUtils.cginc"
+            #include "./noise.cginc"
+            
 
             struct appdata
             {
@@ -39,21 +40,35 @@ Shader "Parker/CloudType"
             }
 
             sampler2D _MainTex;
+            float _NodeSize1;
+            float _NodeSize2;
+            float _NodeSize3;
+            float _NodeWeight1;
+            float _NodeWeight2;
+            float _NodeWeight3;
+            float _ZSlice;
+            float _NoiseThreshold;
+            float _NoiseMultiplier;
+            float _NoiseShift;
+
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float val = 0;
-                // val += (sin(i.uv.x * 25) + 1.0) / 8.0f;
-                // val += (cos(i.uv.y * 18) + 0.0) / 8.0f;
-                float2 uv = i.uv;
-                uv = remap_f2(uv, 0, 1, -1, 1);
-                val += (sin(length(uv * 10)) + 1.0) * 0.5f  * 0.25f;
-                uv += float2(0.3f, -0.6f);
-                val += (sin(length(uv * 10)) + 1.0) * 0.5f  * 0.25f;
-                uv += float2(-0.8f, 0.3f);
-                val += (sin(length(uv * 10)) + 1.0) * 0.5f  * 0.25f;
 
-                return fixed4(val, val, val, 1);
+                float noise = 0;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize1) * _NodeWeight1;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize2) * _NodeWeight2;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize3) * _NodeWeight3;
+
+                noise = (noise + _NoiseShift) * _NoiseMultiplier;
+
+                // // noise = (noise + 1.0) / 2.0;
+                // noise *= _NoiseMultiplier;
+
+                float mask = step(_NoiseThreshold, noise);
+                noise *= mask;
+                
+                return fixed4(noise, noise, noise, 1.0);
             }
             ENDCG
         }

@@ -17,6 +17,7 @@ Shader "Parker/CloudTypeGradient"
 
             #include "UnityCG.cginc"
             #include "shaderUtils.cginc"
+            #include "noise.cginc"
 
             struct appdata
             {
@@ -44,7 +45,11 @@ Shader "Parker/CloudTypeGradient"
             {
 
 
-                float col = lerp(1,0, i.uv.y / i.uv.x);
+                float hieghtNoise = 1.0 + perlinNoise_2D(float2(i.uv.x, i.uv.x), 4) * .4;
+
+                float col = lerp(1,0, ((i.uv.y - 0.1)  * hieghtNoise  / i.uv.x));
+
+                col = 0.9 * col + 0.1 * perlinNoise_2D(i.uv, 4);
 
                 return fixed4(col, col, col, 1.0);
             }
