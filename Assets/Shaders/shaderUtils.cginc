@@ -60,7 +60,9 @@ float fract(float input){
     return input - floor(input);
 }
 
-
+int checkBit(int options, int bit){
+    return options & bit;
+}
 
 
 #endif

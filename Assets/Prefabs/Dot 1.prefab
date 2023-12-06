@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1783312997398894252}
   - component: {fileID: 2081569657914383162}
   m_Layer: 0
-  m_Name: Dot
+  m_Name: Dot 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
-  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_LocalScale: {x: 52, y: 52, z: 52}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d993082af23226c4481305aba6b413ac, type: 2}
+  - {fileID: 2100000, guid: ae02d5dc821e43a4d81e9bd9b486d0cb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

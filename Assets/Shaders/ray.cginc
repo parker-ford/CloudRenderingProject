@@ -1,20 +1,22 @@
 #ifndef _RAY_CGINC_
 #define _RAY_CGINC_
 
-
 #include "./shaderUtils.cginc"
 #include "./noise.cginc"
+
+#define RANDOM_BIT 1
+#define INTERVAL_BIT 2
 
 float _CameraAspect;
 float _CameraFOV;
 int _MarchSteps;
 int _RayPerPixel;
-int _UsingRandom;
+int _RaycastOptions;
 
 float3 getPixelRayInWorld(float2 uv){
 
     //Shift uv by random amount
-    if(_UsingRandom){
+    if(checkBit(_RaycastOptions, RANDOM_BIT)){
         uv = float2(uv.x + (1. / _ScreenParams.x) * random(), uv.y + (1. / _ScreenParams.y) * random());
     }
 
@@ -206,14 +208,34 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
 
 float3 getMarchPosition(float3 origin, float3 direction, float intersectionDist, float iteration, float distPerStep){
     float3 pos;
-    if(_UsingRandom > 0){
-        pos = origin + direction * (intersectionDist + (distPerStep * iteration) + (random() * distPerStep));
+    if(checkBit(_RaycastOptions, RANDOM_BIT)){
+        if(checkBit(_RaycastOptions, INTERVAL_BIT)){
+            float distSoFar = ((iteration * (iteration + 1)) / _MarchSteps);
+            float distConst = ((2*_MarchSteps) / (_MarchSteps + 1));
+            float distThisStep = distSoFar * distConst;
+            pos = origin + direction * (intersectionDist + (distPerStep * distThisStep) + (random() * distPerStep));
+        }
+        else{
+            pos = origin + direction * (intersectionDist + (distPerStep * iteration) + (random() * distPerStep));
+        }
     }
     else{
-        pos = origin + direction * (intersectionDist + (distPerStep * iteration));
+        if(checkBit(_RaycastOptions, INTERVAL_BIT)){
+            float distSoFar = ((iteration * (iteration + 1)) / _MarchSteps);
+            float distConst = ((2*_MarchSteps) / (_MarchSteps + 1));
+            float distThisStep = distSoFar * distConst;
+            pos = origin + direction * (intersectionDist + (distPerStep * distThisStep));
+        }
+        else{
+            pos = origin + direction * (intersectionDist + (distPerStep * iteration));
+        }
     }
 
     return pos;
+}
+
+float3 getMarchPosition(float3 origin, float3 direction, float intersectionDist, float iteration, float distPerStep, float totalFactor){
+    
 }
 
 

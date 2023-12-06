@@ -21,8 +21,8 @@ Shader "Parker/DimensionalProfile"
             #include "UnityCG.cginc"
             #include "ray.cginc"
 
-            #define ATMOSPHERE_LOWER_BOUND 200.0
-            #define ATMOSPHERE_UPPER_BOUND 800.0
+            #define ATMOSPHERE_LOWER_BOUND 100.0
+            #define ATMOSPHERE_UPPER_BOUND 300.0
 
             struct appdata
             {

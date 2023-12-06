@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CloudTypeController : MonoBehaviour
+public class CloudGradientController : MonoBehaviour
 {
     public Material mat;
     // Start is called before the first frame update

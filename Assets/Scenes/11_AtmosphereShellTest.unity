@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
-  atmosphereHeight: 1
+  atmosphereHeight: 700
   densityMultiplier: 1
   distanceMultiplier: 0
   plane: {fileID: 122719302}
@@ -179,8 +179,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: e69381c4f1a48fe45930216cfbd3301a, type: 2}
   useRayRandomization: 0
-  marchSteps: 1
-  raysPerPixel: 1
+  useIncreasingMarchIntervals: 0
+  marchSteps: 10
+  raysPerPixel: 3
 --- !u!4 &344556214
 Transform:
   m_ObjectHideFlags: 0

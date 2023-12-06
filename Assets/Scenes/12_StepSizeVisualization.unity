@@ -430,6 +430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dot: {fileID: 3170223133252251360, guid: 1e79dba5f0c41f147ac2c68a319c6d92, type: 3}
+  endDot: {fileID: 3170223133252251360, guid: cd3b0c6a2a18f904199a435af3b59072, type: 3}
   line: {fileID: 725210901}
   atmosphereLower: {fileID: 885820639}
   atmosphereHigher: {fileID: 80689159}
@@ -437,8 +438,8 @@ MonoBehaviour:
   nearStepSize: 3
   farStepSizeOffset: 60
   stepAdjustmentDistance: 16384
-  atmosphereDimensions: {x: 100, y: 500}
-  stepMode: 1
+  atmosphereDimensions: {x: 256, y: 2048}
+  stepMode: 0
   spacingRatio: 1.5
 --- !u!4 &1262331496
 Transform:
