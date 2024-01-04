@@ -38,6 +38,8 @@ Shader "Parker/CloudCoverage"
                 return o;
             }
 
+            int _CoverageOption;
+
             float _NodeSize1;
             float _NodeSize2;
             float _NodeSize3;
@@ -49,10 +51,7 @@ Shader "Parker/CloudCoverage"
             float _NoiseMultiplier;
             float _NoiseShift;
 
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-
+            fixed4 coverage_perlin3(v2f i){
                 float noise = 0;
                 noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize1) * _NodeWeight1;
                 noise += perlinNoise_3D(float3(i.uv, _ZSlice), _NodeSize2) * _NodeWeight2;
@@ -60,13 +59,41 @@ Shader "Parker/CloudCoverage"
 
                 noise = (noise + _NoiseShift) * _NoiseMultiplier;
 
-                // // noise = (noise + 1.0) / 2.0;
-                // noise *= _NoiseMultiplier;
-
                 float mask = step(_NoiseThreshold, noise);
                 noise *= mask;
                 
                 return fixed4(noise, noise, noise, 1.0);
+            }
+
+            float coverage_perlin7(v2f i){
+                float noise = 0;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 1) * 1;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 2) * 0.5;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 4) * 0.25;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 8) * 0.125;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 16) * 0.0625;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 32) * 0.03125;
+                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 64) * 0.015625;
+
+                noise = abs(noise * 2 + 1);
+
+                return fixed4(noise, noise, noise, 1.0);
+            }
+
+
+
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                if(_CoverageOption == 0){
+                    return coverage_perlin3(i);
+                }
+                else if(_CoverageOption == 1){
+                    return coverage_perlin7(i);
+                }
+                else{
+                    return fixed4(0, 0, 0, 1);
+                }
             }
             ENDCG
         }

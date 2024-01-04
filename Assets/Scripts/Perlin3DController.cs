@@ -26,9 +26,23 @@ public class Perlin3DController : MonoBehaviour
             {
                 for (int z = 0; z < textureSize; z++)
                 {
-                    float noise = Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize, textureSize);
+                    //Original
+                    // float noise = Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize, textureSize);   
+                    // noise = (noise + 1) / 2f;
+                    // Color color = new Color(noise, noise, noise, 1);
+                    // texture.SetPixel(x,y,z, color);
+
+                    //FBM
+                    float noise = 0;
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize, textureSize);
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize * 2, textureSize) * 0.5f;
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize * 4, textureSize) * 0.25f;
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize * 8, textureSize) * 0.125f;
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize * 16, textureSize) * 0.0625f;
+                    noise += Noise.perlinNoise_3D(new Vector3(x,y,z) / textureSize, cellSize * 32, textureSize) * 0.03125f;
+
                     noise = (noise + 1) / 2f;
-                    //Debug.Log(noise);
+
                     Color color = new Color(noise, noise, noise, 1);
                     texture.SetPixel(x,y,z, color);
                 }
@@ -37,7 +51,7 @@ public class Perlin3DController : MonoBehaviour
 
         texture.Apply();
 
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/Perlin3D.asset");
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/FBM_Perlin3D.asset");
         Debug.Log("3D Texture created");
     }
 

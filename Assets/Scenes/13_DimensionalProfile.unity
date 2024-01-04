@@ -346,7 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 6d2a8a8a95e92804f891a9ad8f37966f, type: 2}
   useRayRandomization: 1
-  useIncreasingMarchIntervals: 1
+  useIncreasingMarchIntervals: 0
   marchSteps: 10
   raysPerPixel: 5
 --- !u!4 &360015926
@@ -665,6 +665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cloudCoverageMat: {fileID: 2100000, guid: 62bf419ee5e8cfc4ea27ff6d07948673, type: 2}
+  cloudCoverageType: 0
   nodeSize1: 8
   nodeSize2: 15
   nodeSize3: 20

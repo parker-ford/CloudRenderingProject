@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,13 @@ using UnityEngine;
 public class CloudCoverageController : MonoBehaviour
 {
     public Material cloudCoverageMat;
+
+    public enum CloudCoverageType {
+        perlin3 = 0,
+        perlin7 = 1,
+    }
+    public CloudCoverageType cloudCoverageType = CloudCoverageType.perlin3;
+
     [Range(0f, 25f)]
     public float nodeSize1 = 8f;
     [Range(0f, 25f)]
@@ -35,6 +43,8 @@ public class CloudCoverageController : MonoBehaviour
 
     void Update()
     {
+        cloudCoverageMat.SetInt("_CoverageOption", (int)cloudCoverageType);
+
         cloudCoverageMat.SetFloat("_NodeSize1", nodeSize1);
         cloudCoverageMat.SetFloat("_NodeSize2", nodeSize2);
         cloudCoverageMat.SetFloat("_NodeSize3", nodeSize3);
