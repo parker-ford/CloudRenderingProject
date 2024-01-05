@@ -16,6 +16,7 @@ Shader "Parker/PerlinWorley"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "./noise.cginc"
 
             struct appdata
             {
@@ -41,10 +42,20 @@ Shader "Parker/PerlinWorley"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // just invert the colors
-                col.rgb = 1 - col.rgb;
-                return col;
+
+                float cellSize = 10;
+
+                float fbm_noise = 0;
+
+                for(int i = 1; i <= 2; i++){
+
+                }
+                float noise = worleyNoise_2D(i.uv, cellSize, (1.0 / cellSize) / 1.2);
+                noise = lerp(0.5, 1, noise * noise * noise);
+                noise = 1 - noise;
+
+
+                return float4(noise, noise, noise, 1);
             }
             ENDCG
         }

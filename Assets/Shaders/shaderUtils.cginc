@@ -55,6 +55,18 @@ float random(){
     randomIterations++;
     return normalize_ui(pcgHash_ui(g_pixelID + randomIterations));
 }
+float random(uint i){
+    randomIterations++;
+    return normalize_ui(pcgHash_ui(i * randomIterations));
+}
+float2 random_2D(uint i){
+    uint r1 = pcgHash_ui(i);
+    uint r2 = pcgHash_ui(r1);
+    uint r3 = pcgHash_ui(r2);
+
+    return float2(normalize_ui(r3), normalize_ui(r2));
+}
+
 
 float fract(float input){
     return input - floor(input);

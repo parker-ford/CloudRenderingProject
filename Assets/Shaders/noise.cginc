@@ -191,6 +191,77 @@ float perlinNoise_3D(float3 p, float cellSize){
     return n;
 }
 
+float worleyNoise_2D(float2 p, float cellSize, float intervalOffset){
+
+    //Interval between cells
+    float interval = 1.0 / cellSize;
+
+    //Initial min distance
+    float minDist = intervalOffset;
+
+    //Initial cell that point resides in
+    float2 baseCell = floor(p * cellSize) / cellSize;
+
+    //Loop through all surrounding cells
+    for(int x = -1; x <= 1; x++){
+        for(int y = -1; y <= 1; y++){
+
+            //Get neighboring cell
+            float2 cell = baseCell + float2(float(x) * interval, float(y) * interval);
+
+            //Generate pseudo random offset based on cell
+            uint seed = seedGen_ui2(uint2(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y));
+            float2 rand = random_2D(seed);
+
+            //Find distance to cell
+            float2 cellPosition = cell + (rand * interval);
+            float2 toCell = cellPosition - p;
+            if(length(toCell) < minDist){
+                minDist = length(toCell);
+            }
+        }
+    }
+
+    float result = minDist / intervalOffset;
+    return result;
+}
+
+float worleyNoise_2D(float2 p, float cellSize){
+
+    //Interval between cells
+    float interval = 1.0 / cellSize;
+
+    //Initial min distance
+    float minDist = interval;
+
+    //Initial cell that point resides in
+    float2 baseCell = floor(p * cellSize) / cellSize;
+
+    //Loop through all surrounding cells
+    for(int x = -1; x <= 1; x++){
+        for(int y = -1; y <= 1; y++){
+
+            //Get neighboring cell
+            float2 cell = baseCell + float2(float(x) * interval, float(y) * interval);
+
+            //Generate pseudo random offset based on cell
+            uint seed = seedGen_ui2(uint2(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y));
+            float2 rand = random_2D(seed);
+
+            //Find distance to cell
+            float2 cellPosition = cell + (rand * interval);
+            float2 toCell = cellPosition - p;
+            if(length(toCell) < minDist){
+                minDist = length(toCell);
+            }
+        }
+    }
+
+    float result = minDist / interval;
+    return result;
+}
+
+
 uint seedCount = 0;
 float whiteNoise_2D(float2 p, uint seedOffset){
     int seed = seedGen_ui2(uint2(uint(p.x * _ScreenParams.x), uint(p.y * _ScreenParams.y)));
