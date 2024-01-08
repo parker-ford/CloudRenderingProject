@@ -124,6 +124,21 @@ float perlinNoise_2D(float2 p, float cellSize) {
     return n;
 }
 
+//Based on iqs blog post: https://iquilezles.org/articles/fbm/
+float perlinNoise_2D_fbm(float2 p, float H, float freq, float numOctaves){
+    float G = exp2(-H);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < numOctaves; i++){
+        t += a * perlinNoise_2D(p * f, freq);
+        f *= 2.0;
+        a *= G;
+    }
+
+    return t;
+}
+
 float perlinNoise_3D(float3 p, float cellSize){
     
     //Interval between cells
@@ -259,6 +274,36 @@ float worleyNoise_2D(float2 p, float cellSize){
 
     float result = minDist / interval;
     return result;
+}
+
+//Based on iqs blog post: https://iquilezles.org/articles/fbm/
+float worleyNoise_2D_fbm(float2 p, float H, float freq, float numOctaves){
+    float G = exp2(-H);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < numOctaves; i++){
+        t += a * worleyNoise_2D(p * f, freq);
+        f *= 2.0;
+        a *= G;
+    }
+
+    return t;
+}
+
+//Based on iqs blog post: https://iquilezles.org/articles/fbm/
+float worleyNoise_2D_fbm(float2 p, float intervalOffset, float H, float freq, float numOctaves){
+    float G = exp2(-H);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < numOctaves; i++){
+        t += a * worleyNoise_2D(p * f, freq, intervalOffset);
+        f *= 2.0;
+        a *= G;
+    }
+
+    return t;
 }
 
 
