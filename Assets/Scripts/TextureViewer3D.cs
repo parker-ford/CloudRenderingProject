@@ -20,6 +20,6 @@ public class TextureViewer3D : MonoBehaviour
     void Update()
     {
         textureView.SetTexture("_TextureView", texture);
-        textureView.SetFloat("_Slice", (float)currentSlice/(float)texture.depth);
+        textureView.SetFloat("_Slice", (float)(currentSlice + 0.5f)/(float)texture.depth);
     }
 }

@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 321d1300049e7394bb184fdfa97bc75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 10902e6c5bdca7a43b91145596075a61, type: 2}
+  material: {fileID: 2100000, guid: 707440353c9ae9a41923384adc809c28, type: 2}
 --- !u!1 &744308479
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,6 +332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2038938134}
+  - component: {fileID: 2038938135}
   m_Layer: 0
   m_Name: 3DTextureViewer
   m_TagString: Untagged
@@ -354,6 +355,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2038938135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038938132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78a7d6a39af2d149adae30a069e789b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texture: {fileID: 11700000, guid: 33eca91f3c5c4524d9185a3bd6bf21f4, type: 2}
+  textureView: {fileID: 2100000, guid: 707440353c9ae9a41923384adc809c28, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

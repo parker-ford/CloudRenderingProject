@@ -19,6 +19,7 @@ public class TextureCreator3D : MonoBehaviour
     void Start()
     {
         createPixelArray();
+        fillPixelBuffer();
         pixelArrayTo3DTexture();
 
         // RenderTexture renderTexture = new RenderTexture(resolution, resolution, resolution, RenderTextureFormat.ARGB32);
@@ -34,8 +35,18 @@ public class TextureCreator3D : MonoBehaviour
     private void createPixelArray(){
         pixels = new Pixel[resolution * resolution * resolution];
         for(int i = 0; i < pixels.Length; i++){
-            pixels[i].color = Color.red;
+            pixels[i].color = Color.black;
         }
+    }
+
+    private void fillPixelBuffer(){
+        ComputeBuffer pixelBuffer = new ComputeBuffer(pixels.Length, sizeof(float) * 4);
+        pixelBuffer.SetData(pixels);
+        computeShader.SetBuffer(0, "pixels", pixelBuffer);
+        computeShader.SetFloat("resolution", resolution);
+        computeShader.Dispatch(0, resolution, resolution, resolution);
+        pixelBuffer.GetData(pixels);
+        pixelBuffer.Dispose();
     }
 
     private void pixelArrayTo3DTexture(){
