@@ -40,10 +40,23 @@ Shader "Parker/TextureView3D"
             sampler2D _MainTex;
             sampler3D _TextureView;
             float _Slice;
+            int _Channel;
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex3D(_TextureView, float3(i.uv, _Slice));
+                if(_Channel == 0){
+                    col = float4(col.r, col.r, col.r, 1.0);
+                }
+                if(_Channel == 1){
+                    col = float4(col.g, col.g, col.g, 1.0);
+                }
+                if(_Channel == 2){
+                    col = float4(col.b, col.b, col.b, 1.0);
+                }
+                if(_Channel == 3){
+                    col = float4(col.a, col.a, col.a, 1.0);
+                }
                 return col;
             }
             ENDCG
