@@ -47,6 +47,7 @@ Shader "Parker/BeersSphere"
             int _LightSteps;
             float3 _LightDirection;
 
+            //This function should aproximate distsance
             float getLightInformation(float3 origin){
                 float density = 0;
                 for(int i = 0; i < 5; i++){
@@ -81,7 +82,8 @@ Shader "Parker/BeersSphere"
                         }
                     }
                     // return float4(exp(-light), 0, 0, 1);
-                    return lerp(mainCol, color * exp(-light), density);
+                    //return lerp(mainCol, color * exp(-light), density);
+                    return float4(light, light, light, 1.0);
                 }
 
                 return mainCol;

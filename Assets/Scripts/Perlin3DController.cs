@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class Perlin3DController : MonoBehaviour
 {
+
+
     public ComputeShader computeShader;
     public int textureSize = 64;
     public int cellSize;
 
+
     // Start is called before the first frame update
     void Start()
     {
-
 
         Texture3D texture = new Texture3D(textureSize, textureSize, textureSize, TextureFormat.RGBA32, false);
         texture.wrapMode = TextureWrapMode.Repeat;

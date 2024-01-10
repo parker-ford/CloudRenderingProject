@@ -66,17 +66,9 @@ Shader "Parker/CloudCoverage"
             }
 
             float coverage_perlin7(v2f i){
-                float noise = 0;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 1) * 1;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 2) * 0.5;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 4) * 0.25;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 8) * 0.125;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 16) * 0.0625;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 32) * 0.03125;
-                noise += perlinNoise_3D(float3(i.uv, _ZSlice), 64) * 0.015625;
-
-                noise = abs(noise * 2 + 1);
-
+                float noise = perlinNoise_2D_fbm(i.uv, 0.8, 2, 7); //Perlin noise fBM with cellSize (initial frequency) of 4, 7 octaves, and Hurst Exponent of 0.8
+                noise = (noise + 1.0) / 2.0;    //Normalize to 0-1
+                noise = abs(noise * 2.0 - 1.0); //Billowy Perlin noise
                 return fixed4(noise, noise, noise, 1.0);
             }
 
