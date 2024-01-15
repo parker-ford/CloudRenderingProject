@@ -18,17 +18,26 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     Pixel pixel = pixels[id.x + id.y * resolution + id.z * resolution * resolution];
 
 
-    float perlinWorley_PerlinFrequency = 1;
-    float perlinWorley_WorleyFrequency = 1;
+    float noiseR = perlinWorley_3D(uvw);
 
-    float worley_GFrequency = 8;
-    float worley_BFrequency = 1;
-    float worley_AFrequency = 1;
+    //float3 p, float H, float freq, float numOctaves
+    float noiseG_H = 0.8;
+    float noiseG_Freq = 4;
+    float noiseG_Iter = 4;
+    float noiseG_IterOffset = (1 / noiseG_Freq) * 1.2f;
+    float noiseG = worleyNoise_3D_fbm(uvw,noiseG_H, noiseG_Freq, noiseG_Iter);
+    noiseG = 1 - noiseG;
 
-    float nosieG = worleyNoise_3D(uvw, worley_GFrequency);
+    float noiseB_Freq = 8;
+    float noiseB = worleyNoise_3D_fbm(uvw, 0.8, noiseB_Freq, 4);
+    noiseB = 1 - noiseB;
+
+    float noiseA_Freq = 16;
+    float noiseA = worleyNoise_3D_fbm(uvw, 0.8, noiseA_Freq, 4);
+    noiseA = 1 - noiseA;
 
 
-    float4 color = float4(0, nosieG, 0, 1);
+    float4 color = float4(noiseR, noiseG, noiseB, noiseA);
 
     pixel.color = color;
 

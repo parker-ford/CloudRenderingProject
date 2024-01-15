@@ -20,8 +20,10 @@ Shader "Parker/DimensionalProfile3D"
             #include "UnityCG.cginc"
             #include "ray.cginc"
 
-            #define ATMOSPHERE_LOWER_BOUND 100.0
-            #define ATMOSPHERE_UPPER_BOUND 300.0
+            #define ATMOSPHERE_LOWER_BOUND 2500.0
+            #define ATMOSPHERE_UPPER_BOUND 4200.0
+
+            #define CLOUD_FREQUENCY 2048.0
 
             struct appdata
             {
@@ -46,9 +48,22 @@ Shader "Parker/DimensionalProfile3D"
             sampler2D _MainTex;
             sampler3D _Cloud3DNoiseTexture;
 
-            float sampleCloudDensity(float3 pos){
-                float density = tex3D(_Cloud3DNoiseTexture, pos).r;
-                return density;
+            float cloudGradient(float h)
+            {
+                return smoothstep(0., .05, h) * smoothstep(1.25, .5, h);
+            }
+
+            float getHeightFract(float3 p){
+                return (p.y - ATMOSPHERE_LOWER_BOUND) / (ATMOSPHERE_UPPER_BOUND - ATMOSPHERE_LOWER_BOUND);
+            }
+
+            float sampleCloudDensity(float3 pos, float y){
+                float4 lowFreqNoise = tex3D(_Cloud3DNoiseTexture, pos);
+                float lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
+                float baseCloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+                baseCloud = remap_f(baseCloud, .85, 1., 0., 1.);
+                baseCloud = saturate(baseCloud);
+                return baseCloud;
             }
 
             float4 getRayColor(v2f i){
@@ -57,7 +72,7 @@ Shader "Parker/DimensionalProfile3D"
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
 
-                float maxDist = 5000;
+                float maxDist = 50000;
 
                 intersectData planeIntersectLower = planeIntersection(rayOrigin, rayDir, float3(0,ATMOSPHERE_LOWER_BOUND,0), float3(0,-1,0));
                 intersectData planeIntersectUpper = planeIntersection(rayOrigin, rayDir, float3(0,ATMOSPHERE_UPPER_BOUND,0), float3(0,-1,0));
@@ -67,26 +82,64 @@ Shader "Parker/DimensionalProfile3D"
                     float3 endPos = rayOrigin + rayDir * planeIntersectUpper.intersectPoints.x;
                     float dist = length(endPos - startPos);
                     float distPerStep = dist / (float)_MarchSteps;
-                    float cloudDensity = 0;
+                    float density = 0;
                     float4 cloudCol = float4(1,1,1,1);
                     if(length(startPos) < maxDist){
                         [unroll(50)]
                         for(int j = 0; j < _MarchSteps; j++){
                             float3 pos = getMarchPosition(rayOrigin, rayDir, planeIntersectLower.intersectPoints.x , float(j), distPerStep);
-
+                            float heightFract = getHeightFract(pos);
                             float3 samplePos;
-                            samplePos.x = remap_f(pos.x, -512.0, 512.0, 0.0, 1.0);
-                            samplePos.z = remap_f(pos.z, -512.0, 512.0, 0.0, 1.0);
-                            samplePos.y = pos.y;
+                            samplePos.x = remap_f(pos.x, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
+                            samplePos.z = remap_f(pos.z, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
+                            samplePos.y = heightFract;
 
-                            float density = sampleCloudDensity(samplePos);
+                            density += sampleCloudDensity(samplePos, heightFract) * cloudGradient(heightFract);
 
                             
-                            cloudDensity += density;
                         }
+                        return lerp(mainCol,cloudCol, density);
                     }
 
-                    return lerp(mainCol, cloudCol, cloudDensity);
+
+                    // float3 samplePos;
+                    // samplePos.x = remap_f(startPos.x, -512.0, 512.0, 0.0, 1.0);
+                    // samplePos.z = remap_f(startPos.z, -512.0, 512.0, 0.0, 1.0);
+                    // samplePos.y = startPos.y;
+
+                    // float4 cloudCol = float4(1,1,1,1);
+                    // float baseCloud = sampleCloudDensity(samplePos);
+
+                    // float4 noiseSample = tex3D(_Cloud3DNoiseTexture, samplePos);
+                    // float noiseFBM = (noiseSample.g * 0.625) + (noiseSample.b * 0.25) + (noiseSample.a * 0.125);
+                    // float baseCloud = remap_f(noiseSample.r, noiseFBM - 1, 1.0, 0.0, 1.0);
+                    // baseCloud = remap_f(baseCloud, .75, 1., 0., 1.);
+                    // baseCloud = saturate(baseCloud);
+                    // return float4(baseCloud, baseCloud, baseCloud, 1.0);
+                    //return lerp(mainCol, cloudCol, baseCloud);
+
+
+                    // float dist = length(endPos - startPos);
+                    // float distPerStep = dist / (float)_MarchSteps;
+                    // float cloudDensity = 0;
+                    // if(length(startPos) < maxDist){
+                    //     [unroll(50)]
+                    //     for(int j = 0; j < _MarchSteps; j++){
+                    //         float3 pos = getMarchPosition(rayOrigin, rayDir, planeIntersectLower.intersectPoints.x , float(j), distPerStep);
+
+                    //         float3 samplePos;
+                    //         samplePos.x = remap_f(pos.x, -512.0, 512.0, 0.0, 1.0);
+                    //         samplePos.z = remap_f(pos.z, -512.0, 512.0, 0.0, 1.0);
+                    //         samplePos.y = pos.y;
+
+                    //         float density = sampleCloudDensity(samplePos);
+
+                            
+                    //         cloudDensity += density;
+                    //     }
+                    // }
+
+                    // return lerp(mainCol, cloudCol, cloudDensity);
                 }
 
                 return mainCol;

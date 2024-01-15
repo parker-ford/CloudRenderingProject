@@ -206,6 +206,21 @@ float perlinNoise_3D(float3 p, float cellSize){
     return n;
 }
 
+//Based on iqs blog post: https://iquilezles.org/articles/fbm/
+float perlinNoise_3D_fbm(float3 p, float H, float freq, float numOctaves){
+    float G = exp2(-H);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < numOctaves; i++){
+        t += a * perlinNoise_3D(p * f, freq);
+        f *= 2.0;
+        a *= G;
+    }
+
+    return t;
+}
+
 float worleyNoise_3D(float3 p, float cellSize, float intervalOffset){
     //Interval between cells
     float interval = 1.0 / cellSize;
@@ -281,17 +296,24 @@ float worleyNoise_3D(float3 p, float cellSize){
 }
 
 float worleyNoise_3D_fbm(float3 p, float H, float freq, float numOctaves){
-    float G = exp2(-H);
-    float f = 1.0;
-    float a = 1.0;
-    float t = 0.0;
-    for(int i = 0; i < numOctaves; i++){
-        t += a * worleyNoise_3D(p * f, freq);
-        f *= 2.0;
-        a *= G;
-    }
+    // float G = exp2(-H);
+    // float f = 1.0;
+    // float a = 1.0;
+    // float t = 0.0;
+    // for(int i = 0; i < numOctaves; i++){
+    //     t += a * worleyNoise_3D(p * f, freq);
+    //     f *= 2.0;
+    //     a *= G;
+    // }
 
-    return t;
+    // return t;
+
+    float noise = 0;
+    noise += worleyNoise_3D(p, freq) * .8;
+    noise += worleyNoise_3D(p, freq * 2) * .25;
+    noise += worleyNoise_3D(p, freq * 4) * .125;
+
+    return noise;
 }
 
 float worleyNoise_3D_fbm(float3 p, float intervalOffset, float H, float freq, float numOctaves){
@@ -380,18 +402,31 @@ float worleyNoise_2D(float2 p, float cellSize){
 
 //Based on iqs blog post: https://iquilezles.org/articles/fbm/
 float worleyNoise_2D_fbm(float2 p, float H, float freq, float numOctaves){
-    float G = exp2(-H);
-    float f = 1.0;
-    float a = 1.0;
-    float t = 0.0;
-    for(int i = 0; i < numOctaves; i++){
-        t += a * worleyNoise_2D(p * f, freq);
-        f *= 2.0;
-        a *= G;
-    }
+    // float G = exp2(-H);
+    // float f = 1.0;
+    // float a = 1.0;
+    // float t = 0.0;
+    // for(int i = 0; i < numOctaves; i++){
+    //     t += a * worleyNoise_2D(p * f, freq);
+    //     f *= 2.0;
+    //     a *= G;
+    // }
 
-    return t;
+    // return t;
+
+    float noise = 0;
+    noise += worleyNoise_2D(p, freq) * .8;
+    noise += worleyNoise_2D(p, freq * 2) * .25;
+    noise += worleyNoise_2D(p, freq * 4) * .125;
+
+    return noise;
+
+        // return worleyNoise(p*freq, freq) * .625 +
+        // 	 worleyNoise(p*freq*2., freq*2.) * .25 +
+        // 	 worleyNoise(p*freq*4., freq*4.) * .125;
 }
+
+
 
 //Based on iqs blog post: https://iquilezles.org/articles/fbm/
 float worleyNoise_2D_fbm(float2 p, float intervalOffset, float H, float freq, float numOctaves){
@@ -406,6 +441,19 @@ float worleyNoise_2D_fbm(float2 p, float intervalOffset, float H, float freq, fl
     }
 
     return t;
+}
+
+float perlinWorley_3D(float3 uvw){
+    float noise = 0;
+    float perlinNoise = perlinNoise_3D_fbm(uvw, 0.8, 2, 7);
+    perlinNoise = abs(perlinNoise);
+
+    float worleyNoise = worleyNoise_3D_fbm(uvw, 0.7, 4, 5);
+    worleyNoise = 1 - worleyNoise;
+
+    noise = remap_f(perlinNoise, 0.0, 1.0, worleyNoise, 1.0);
+
+    return noise;
 }
 
 
