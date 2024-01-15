@@ -20,8 +20,8 @@ Shader "Parker/DimensionalProfile3D"
             #include "UnityCG.cginc"
             #include "ray.cginc"
 
-            #define ATMOSPHERE_LOWER_BOUND 2500.0
-            #define ATMOSPHERE_UPPER_BOUND 4200.0
+            #define ATMOSPHERE_LOWER_BOUND 250.0
+            #define ATMOSPHERE_UPPER_BOUND 420.0
 
             #define CLOUD_FREQUENCY 2048.0
 
@@ -50,7 +50,7 @@ Shader "Parker/DimensionalProfile3D"
 
             float cloudGradient(float h)
             {
-                return smoothstep(0., .05, h) * smoothstep(1.25, .5, h);
+                return smoothstep(0., .1, h) * smoothstep(1.25, .5, h);
             }
 
             float getHeightFract(float3 p){

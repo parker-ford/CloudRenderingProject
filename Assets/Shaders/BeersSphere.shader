@@ -46,6 +46,7 @@ Shader "Parker/BeersSphere"
             int _DensitySteps;
             int _LightSteps;
             float3 _LightDirection;
+            float3 _LightPosition;
 
             //This function should aproximate distsance
             float getLightInformation(float3 origin){
@@ -61,28 +62,40 @@ Shader "Parker/BeersSphere"
             }
 
 
+
+            float marchToLight(float3 p){
+                float density = 0;
+                float distPerStep = length(_SphereCenter - _LightPosition) / (float)_LightSteps;
+                for(int i = 0; i < _LightSteps; i++){
+                    float3 pos = p + _LightDirection * distPerStep * float(i);
+                    if(length(pos - _SphereCenter) < _SphereRadius){
+                        //density += _SphereDensity;
+                        density += (1 - density) * _SphereDensity;
+                    }
+                }
+                return density;
+            }
+
+
             float4 getRayColor(v2f i){
                 float4 mainCol = tex2D(_MainTex, i.uv);
                 float4 color = float4(1.0, 0.0, 0.0, 1.0);
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 intersectData sphereIntersect = sphereIntersection(rayOrigin, rayDir, _SphereCenter, _SphereRadius);
+                float light = 0;
+                float density = 0;
                 if(sphereIntersect.intersects){
-                    float dist = sphereIntersect.intersectPoints.y - sphereIntersect.intersectPoints.x;
-                    // float distPerStep = dist / (float)_MarchSteps;
-                    float distPerStep = 0.1;
-                    float density = 0;
-                    float light = 0;
-                    float totalOcularDepth = 0;
+                    float distPerStep = (_SphereRadius * 2) / (float)_MarchSteps;
                     for(int j = 0; j < _MarchSteps; j++){
-                        float3 pos = getMarchPosition(rayOrigin, rayDir, sphereIntersect.intersectPoints.x, float(j), distPerStep);
+                        float3 pos = rayOrigin + (rayDir * (sphereIntersect.intersectPoints.x + distPerStep * float(j)));
                         if(length(pos - _SphereCenter) < _SphereRadius){
                             density += (1 - density) * _SphereDensity;
-                            light += (1 - light) * getLightInformation(pos);
+                            light += marchToLight(pos);
                         }
                     }
                     // return float4(exp(-light), 0, 0, 1);
-                    //return lerp(mainCol, color * exp(-light), density);
+                    return lerp(mainCol, color * exp(-light), density);
                     return float4(light, light, light, 1.0);
                 }
 

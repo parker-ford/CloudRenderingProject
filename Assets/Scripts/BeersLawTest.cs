@@ -7,6 +7,7 @@ public class BeersLawTest : MonoBehaviour
     public Material mat;
     public GameObject myLight;
     public float density = 0.1f;
+    public int lightSteps  = 5;
     public bool animateLight = false;
     public Transform sphere;
 
@@ -31,6 +32,8 @@ public class BeersLawTest : MonoBehaviour
         mat.SetFloat("_SphereRadius", sphere.transform.localScale.y / 2.0f);
         mat.SetFloat("_SphereDensity", density);
         mat.SetVector("_LightDirection", myLight.transform.position.normalized);
+        mat.SetVector("_LightPosition", myLight.transform.position);
+        mat.SetInt("_LightSteps", lightSteps);
         // mat.SetVector("_LightDirection", -myLight.transform.position);
 
     }
