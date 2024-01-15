@@ -367,7 +367,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c78a7d6a39af2d149adae30a069e789b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: {fileID: 11700000, guid: 33eca91f3c5c4524d9185a3bd6bf21f4, type: 2}
+  channel: 1
+  texture: {fileID: 11700000, guid: 9f5f3db1943321a4794f0ba40f23d7ff, type: 2}
   textureView: {fileID: 2100000, guid: 707440353c9ae9a41923384adc809c28, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

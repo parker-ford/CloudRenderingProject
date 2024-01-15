@@ -67,6 +67,15 @@ float2 random_2D(uint i){
     return float2(normalize_ui(r3), normalize_ui(r2));
 }
 
+float3 random_3D(uint i){
+    uint r1 = pcgHash_ui(i);
+    uint r2 = pcgHash_ui(r1);
+    uint r3 = pcgHash_ui(r2);
+    uint r4 = pcgHash_ui(r3);
+
+    return float3(normalize_ui(r4), normalize_ui(r3), normalize_ui(r2));
+}
+
 
 float fract(float input){
     return input - floor(input);

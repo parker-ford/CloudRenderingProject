@@ -1,0 +1,40 @@
+#pragma kernel CSMain
+
+#include "UnityCG.cginc"
+#include "noise.cginc"
+
+struct Pixel {
+    float4 color;
+};
+
+RWStructuredBuffer<Pixel> pixels;
+float resolution;
+
+[numthreads(1,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    
+    float3 uvw = float3(id.xyz) / resolution;
+    Pixel pixel = pixels[id.x + id.y * resolution + id.z * resolution * resolution];
+
+
+    float perlinWorley_PerlinFrequency = 1;
+    float perlinWorley_WorleyFrequency = 1;
+
+    float worley_GFrequency = 8;
+    float worley_BFrequency = 1;
+    float worley_AFrequency = 1;
+
+    float nosieG = worleyNoise_3D(uvw, worley_GFrequency);
+
+
+    float4 color = float4(0, nosieG, 0, 1);
+
+    pixel.color = color;
+
+
+
+    pixels[id.x + id.y * resolution + id.z * resolution * resolution] = pixel;
+
+
+}

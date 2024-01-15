@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 public class TextureCreator3D : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class TextureCreator3D : MonoBehaviour
     }
     private Pixel[] pixels;
 
+    public String textureName;
 
     public ComputeShader computeShader;
 
@@ -59,7 +61,7 @@ public class TextureCreator3D : MonoBehaviour
             }
         }
         texture.Apply();
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/TestTexture3D.asset");
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + textureName + ".asset" );
         Debug.Log("3D Texture created");
     }
 }
