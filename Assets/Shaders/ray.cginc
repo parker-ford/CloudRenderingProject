@@ -206,6 +206,51 @@ intersectData planeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, flo
 
 }
 
+intersectData cubeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, float length){
+    intersectData result;
+    result.intersects = false;
+    result.intersectPoints = float2(0,0);
+
+    float3 upVectors[6];
+    float3 rightVectors[6];
+
+    upVectors[0] = float3(0,1,0);
+    rightVectors[0] = float3(1,0,0);
+
+    upVectors[1] = float3(0,-1,0);
+    rightVectors[1] = float3(1,0,0);
+
+    upVectors[2] = float3(0,0,1);
+    rightVectors[2] = float3(1,0,0);
+
+    upVectors[3] = float3(0,0,-1);
+    rightVectors[3] = float3(1,0,0);
+
+    upVectors[4] = float3(1,0,0);
+    rightVectors[4] = float3(0,0,1);
+
+    upVectors[5] = float3(-1,0,0);
+    rightVectors[5] = float3(0,0,1);
+
+    for(int i = 0; i < 6; i++){
+        float3 n = upVectors[i];
+        float3 u = rightVectors[i];
+        intersectData planeIntersect = planeIntersection(rayOrigin, rayDir, pos + n * length/2, n, u, length/2, length/2);
+        if(planeIntersect.intersects){
+            if(result.intersects){
+                result.intersectPoints.x = min(result.intersectPoints.x, planeIntersect.intersectPoints.x);
+                result.intersectPoints.y = max(result.intersectPoints.y, planeIntersect.intersectPoints.y);
+            }
+            else{
+                result.intersects = true;
+                result.intersectPoints = planeIntersect.intersectPoints;
+            }
+        }
+    }
+
+    return result;
+}
+
 float3 getMarchPosition(float3 origin, float3 direction, float intersectionDist, float iteration, float distPerStep){
     float3 pos;
     if(checkBit(_RaycastOptions, RANDOM_BIT)){
