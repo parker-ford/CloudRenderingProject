@@ -62,7 +62,7 @@ Shader "Parker/CloudCube"
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
-                float4 cubeCol = float4(1,1,0,1);
+                float4 cubeCol = float4(0,1,0,1);
                 intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
                 float density = 0;
                 if(cubeIntersect.intersects){

@@ -477,7 +477,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: d7e39ab30b3aa4347843354fbb926193, type: 2}
   cube: {fileID: 180411827}
   cubeOption: 1
-  absorption: 0.1
+  absorption: 0.5
 --- !u!114 &1457658193
 MonoBehaviour:
   m_ObjectHideFlags: 0
