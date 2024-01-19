@@ -85,6 +85,16 @@ int checkBit(int options, int bit){
     return options & bit;
 }
 
+float2 modulo(float2 divident, float2 divisor){
+    float2 positiveDivident = divident % divisor + divisor;
+    return positiveDivident % divisor;
+}
+
+float3 modulo(float3 divident, float3 divisor){
+    float3 positiveDivident = divident % divisor + divisor;
+    return positiveDivident % divisor;
+}
+
 
 #endif
 

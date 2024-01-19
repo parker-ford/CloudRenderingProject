@@ -81,7 +81,7 @@ float fade(float x){
 }
 
 float perlinNoise_2D(float2 p, float cellSize) {
-    
+
     //Interval between cells
     float i = 1.0 / cellSize;
 
@@ -90,9 +90,15 @@ float perlinNoise_2D(float2 p, float cellSize) {
 
     //Cordinates of cell corners
     float2 tl = float2(id.x, id.y);
-    float2 tr = float2(id.x + i, id.y);
+    float2 tr = float2(id.x + i, id.y);;
     float2 bl = float2(id.x, id.y + i);
     float2 br = float2(id.x + i, id.y + i);
+
+    //Wrap around
+    tl = modulo(tl, float2(1,1));
+    tr = modulo(tr, float2(1,1));
+    bl = modulo(bl, float2(1,1));
+    br = modulo(br, float2(1,1));
 
     //Vector from corners of cell to point
     float2 v_tl = remap_f2(float2(p.x - id.x, p.y - id.y), 0.0, i, 0.0, 1.0);
@@ -156,6 +162,16 @@ float perlinNoise_3D(float3 p, float cellSize){
     float3 c101 = float3(id.x + i, id.y, id.z + i);
     float3 c110 = float3(id.x + i, id.y + i, id.z);
     float3 c111 = float3(id.x + i, id.y + i, id.z + i);
+
+    //Wrap around
+    c000 = modulo(c000, float3(1,1,1));
+    c001 = modulo(c001, float3(1,1,1));
+    c010 = modulo(c010, float3(1,1,1));
+    c011 = modulo(c011, float3(1,1,1));
+    c100 = modulo(c100, float3(1,1,1));
+    c101 = modulo(c101, float3(1,1,1));
+    c110 = modulo(c110, float3(1,1,1));
+    c111 = modulo(c111, float3(1,1,1));
 
     //Vectors from corners to point
     float3 v000 = remap_f3(p - c000, 0, i, 0, 1);
@@ -239,6 +255,9 @@ float worleyNoise_3D(float3 p, float cellSize, float intervalOffset){
                 //Get neighboring cell
                 float3 cell = baseCell + float3(float(x) * interval, float(y) * interval, float(z) * interval);
 
+                //Wrap cell around edges
+                float3 wrappedCell = modulo(cell, float3(1.0, 1.0, 1.0));
+
                 //Generate pseudo random offset based on cell
                 uint seed = seedGen_ui3(uint3(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y, cell.z * _ScreenParams.y));
                 float3 rand = random_3D(seed);
@@ -275,6 +294,9 @@ float worleyNoise_3D(float3 p, float cellSize){
 
                 //Get neighboring cell
                 float3 cell = baseCell + float3(float(x) * interval, float(y) * interval, float(z) * interval);
+
+                //Wrap cell around edges
+                float3 wrappedCell = modulo(cell, float3(1.0, 1.0, 1.0));
 
                 //Generate pseudo random offset based on cell
                 uint seed = seedGen_ui3(uint3(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y, cell.z * _ScreenParams.y));
@@ -352,6 +374,9 @@ float worleyNoise_2D(float2 p, float cellSize, float intervalOffset){
             uint seed = seedGen_ui2(uint2(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y));
             float2 rand = random_2D(seed);
 
+            //Wrap cell around edges
+            float2 wrappedCell = modulo(cell, float2(1.0, 1.0));
+
             //Find distance to cell
             float2 cellPosition = cell + (rand * interval);
             float2 toCell = cellPosition - p;
@@ -381,10 +406,14 @@ float worleyNoise_2D(float2 p, float cellSize){
         for(int y = -1; y <= 1; y++){
 
             //Get neighboring cell
-            float2 cell = baseCell + float2(float(x) * interval, float(y) * interval);
+            float2 cellOffset = float2(float(x) * interval, float(y) * interval);
+            float2 cell = baseCell + cellOffset;
+
+            //Wrap cell around edges
+            float2 wrappedCell = modulo(cell, float2(1.0, 1.0));
 
             //Generate pseudo random offset based on cell
-            uint seed = seedGen_ui2(uint2(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y));
+            uint seed = seedGen_ui2(uint2(wrappedCell.x * _ScreenParams.x, wrappedCell.y * _ScreenParams.y));
             float2 rand = random_2D(seed);
 
             //Find distance to cell

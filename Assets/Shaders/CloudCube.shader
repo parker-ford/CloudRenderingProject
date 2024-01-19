@@ -41,9 +41,10 @@ Shader "Parker/CloudCube"
             sampler2D _MainTex;
             float3 _CubePosition;
             float _CubeLength;
+            int _CubeOptions;
+            float _Absorption;
 
-            float4 getRayColor(v2f i){
-
+            float4 cubeRayIntersection(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
@@ -55,6 +56,35 @@ Shader "Parker/CloudCube"
 
 
                 return mainCol;
+            }
+
+            float4 cubeConstantBeerLaw(v2f i){
+                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayOrigin = getCameraOriginInWorld();
+                fixed4 mainCol = tex2D(_MainTex, i.uv);
+                float4 cubeCol = float4(1,1,0,1);
+                intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
+                float density = 0;
+                if(cubeIntersect.intersects){
+                    float3 enterPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.x;
+                    float3 exitPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.y;
+                    float distance = length(exitPoint - enterPoint);
+                    density = 1 - exp(-distance * _Absorption);
+
+                }
+                return lerp(mainCol, cubeCol, density);
+            }
+
+            float4 getRayColor(v2f i){
+
+                if(_CubeOptions == 0){
+                    return cubeRayIntersection(i);
+                }
+                else if(_CubeOptions == 1){
+                    return cubeConstantBeerLaw(i);
+                }
+
+                return float4(0,0,0,0);
             }
 
             fixed4 frag (v2f i) : SV_Target
