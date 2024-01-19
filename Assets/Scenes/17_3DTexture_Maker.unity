@@ -338,8 +338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a108185a6b4ed154191316763701cf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureName: LowFrequencyCloudNoise
-  computeShader: {fileID: 7200000, guid: 3797949348c3669408b93234700e7857, type: 3}
+  textureName: Perlin3D
+  computeShader: {fileID: 7200000, guid: f5a326aea18498143896c82ce980cdd7, type: 3}
   resolution: 128
 --- !u!4 &1758422415
 Transform:

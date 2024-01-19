@@ -214,34 +214,34 @@ float perlinNoise_3D(float3 p, float cellSize){
     float3 c111 = float3(id.x + i, id.y + i, id.z + i);
 
     //Wrap around
-    c000 = modulo(c000, float3(1,1,1));
-    c001 = modulo(c001, float3(1,1,1));
-    c010 = modulo(c010, float3(1,1,1));
-    c011 = modulo(c011, float3(1,1,1));
-    c100 = modulo(c100, float3(1,1,1));
-    c101 = modulo(c101, float3(1,1,1));
-    c110 = modulo(c110, float3(1,1,1));
-    c111 = modulo(c111, float3(1,1,1));
+    float3 c000_w = modulo(c000, float3(1,1,1));
+    float3 c001_w = modulo(c001, float3(1,1,1));
+    float3 c010_w = modulo(c010, float3(1,1,1));
+    float3 c011_w = modulo(c011, float3(1,1,1));
+    float3 c100_w = modulo(c100, float3(1,1,1));
+    float3 c101_w = modulo(c101, float3(1,1,1));
+    float3 c110_w = modulo(c110, float3(1,1,1));
+    float3 c111_w = modulo(c111, float3(1,1,1));
 
     //Vectors from corners to point
-    float3 v000 = remap_f3(p - c000, 0, i, 0, 1);
-    float3 v001 = remap_f3(p - c001, 0, i, 0, 1);
-    float3 v010 = remap_f3(p - c010, 0, i, 0, 1);
-    float3 v011 = remap_f3(p - c011, 0, i, 0, 1);
-    float3 v100 = remap_f3(p - c100, 0, i, 0, 1);
-    float3 v101 = remap_f3(p - c101, 0, i, 0, 1);
-    float3 v110 = remap_f3(p - c110, 0, i, 0, 1);
-    float3 v111 = remap_f3(p - c111, 0, i, 0, 1);
+    float3 v000 = remap_f3(p - c000, 0.0, i, 0.0, 1.0);
+    float3 v001 = remap_f3(p - c001, 0.0, i, 0.0, 1.0);
+    float3 v010 = remap_f3(p - c010, 0.0, i, 0.0, 1.0);
+    float3 v011 = remap_f3(p - c011, 0.0, i, 0.0, 1.0);
+    float3 v100 = remap_f3(p - c100, 0.0, i, 0.0, 1.0);
+    float3 v101 = remap_f3(p - c101, 0.0, i, 0.0, 1.0);
+    float3 v110 = remap_f3(p - c110, 0.0, i, 0.0, 1.0);
+    float3 v111 = remap_f3(p - c111, 0.0, i, 0.0, 1.0);
 
     //Gradient vectors at each corner of cell
-    float3 gv000 = gradientVector_3D(c000);
-    float3 gv001 = gradientVector_3D(c001);
-    float3 gv010 = gradientVector_3D(c010);
-    float3 gv011 = gradientVector_3D(c011);
-    float3 gv100 = gradientVector_3D(c100);
-    float3 gv101 = gradientVector_3D(c101);
-    float3 gv110 = gradientVector_3D(c110);
-    float3 gv111 = gradientVector_3D(c111);
+    float3 gv000 = gradientVector_3D(c000_w);
+    float3 gv001 = gradientVector_3D(c001_w);
+    float3 gv010 = gradientVector_3D(c010_w);
+    float3 gv011 = gradientVector_3D(c011_w);
+    float3 gv100 = gradientVector_3D(c100_w);
+    float3 gv101 = gradientVector_3D(c101_w);
+    float3 gv110 = gradientVector_3D(c110_w);
+    float3 gv111 = gradientVector_3D(c111_w);
 
     //Fade values
     float fx = fade(fract(p.x * cellSize));
@@ -291,14 +291,14 @@ float perlinNoise_3D(float3 p, float cellSize, int f){
     float3 c111 = float3(id.x + i, id.y + i, id.z + i);
 
     //Wrap around
-    c000 = modulo(c000, float3(f,f,f));
-    c001 = modulo(c001, float3(f,f,f));
-    c010 = modulo(c010, float3(f,f,f));
-    c011 = modulo(c011, float3(f,f,f));
-    c100 = modulo(c100, float3(f,f,f));
-    c101 = modulo(c101, float3(f,f,f));
-    c110 = modulo(c110, float3(f,f,f));
-    c111 = modulo(c111, float3(f,f,f));
+    float3 c000_w = modulo(c000, float3(f,f,f));
+    float3 c001_w = modulo(c001, float3(f,f,f));
+    float3 c010_w = modulo(c010, float3(f,f,f));
+    float3 c011_w = modulo(c011, float3(f,f,f));
+    float3 c100_w = modulo(c100, float3(f,f,f));
+    float3 c101_w = modulo(c101, float3(f,f,f));
+    float3 c110_w = modulo(c110, float3(f,f,f));
+    float3 c111_w = modulo(c111, float3(f,f,f));
 
     //Vectors from corners to point
     float3 v000 = remap_f3(p - c000, 0, i, 0, 1);
@@ -311,14 +311,14 @@ float perlinNoise_3D(float3 p, float cellSize, int f){
     float3 v111 = remap_f3(p - c111, 0, i, 0, 1);
 
     //Gradient vectors at each corner of cell
-    float3 gv000 = gradientVector_3D(c000);
-    float3 gv001 = gradientVector_3D(c001);
-    float3 gv010 = gradientVector_3D(c010);
-    float3 gv011 = gradientVector_3D(c011);
-    float3 gv100 = gradientVector_3D(c100);
-    float3 gv101 = gradientVector_3D(c101);
-    float3 gv110 = gradientVector_3D(c110);
-    float3 gv111 = gradientVector_3D(c111);
+    float3 gv000 = gradientVector_3D(c000_w);
+    float3 gv001 = gradientVector_3D(c001_w);
+    float3 gv010 = gradientVector_3D(c010_w);
+    float3 gv011 = gradientVector_3D(c011_w);
+    float3 gv100 = gradientVector_3D(c100_w);
+    float3 gv101 = gradientVector_3D(c101_w);
+    float3 gv110 = gradientVector_3D(c110_w);
+    float3 gv111 = gradientVector_3D(c111_w);
 
     //Fade values
     float fx = fade(fract(p.x * cellSize));
@@ -611,6 +611,20 @@ float perlinWorley_3D(float3 uvw){
 
     return noise;
 }
+
+float perlinWorley_2D(float2 uv){
+    float noise = 0;
+    float perlinNoise = perlinNoise_2D_fbm(uv, 0.8, 2, 7);
+    perlinNoise = abs(perlinNoise);
+
+    float worleyNoise = worleyNoise_2D_fbm(uv, 0.7, 4, 5);
+    worleyNoise = 1 - worleyNoise;
+
+    noise = remap_f(perlinNoise, 0.0, 1.0, worleyNoise, 1.0);
+
+    return noise;
+}
+
 
 
 uint seedCount = 0;

@@ -1,0 +1,29 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+#include "UnityCG.cginc"
+#include "noise.cginc"
+
+struct Pixel {
+    float4 color;
+};
+
+RWStructuredBuffer<Pixel> pixels;
+float resolution;
+
+[numthreads(1,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float3 uvw = float3(id.xyz) / resolution;
+    Pixel pixel = pixels[id.x + id.y * resolution + id.z * resolution * resolution];
+
+    float noise = worleyNoise_3D(uvw, 4.0);
+    //noise = (noise + 1.0) / 2.0;
+    noise = 1 - noise;
+
+    float4 color = float4(noise, noise, noise, 1.0);
+
+    pixel.color = color;
+
+    pixels[id.x + id.y * resolution + id.z * resolution * resolution] = pixel;
+}

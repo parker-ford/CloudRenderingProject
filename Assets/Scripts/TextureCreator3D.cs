@@ -23,15 +23,6 @@ public class TextureCreator3D : MonoBehaviour
         createPixelArray();
         fillPixelBuffer();
         pixelArrayTo3DTexture();
-
-        // RenderTexture renderTexture = new RenderTexture(resolution, resolution, resolution, RenderTextureFormat.ARGB32);
-        // renderTexture.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-        // renderTexture.volumeDepth = resolution;
-        // renderTexture.enableRandomWrite = true;
-        // renderTexture.Create();
-
-        // computeShader.SetTexture(0, "Result", renderTexture);
-
     }
 
     private void createPixelArray(){
@@ -61,7 +52,12 @@ public class TextureCreator3D : MonoBehaviour
             }
         }
         texture.Apply();
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + textureName + ".asset" );
+
+    string dateTimeString = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+        string folderPath = Application.dataPath + "/Textures/" + textureName;
+        System.IO.Directory.CreateDirectory(folderPath);
+
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + textureName + "/"  + textureName + "_" + dateTimeString + ".asset" );
         Debug.Log("3D Texture created");
     }
 }
