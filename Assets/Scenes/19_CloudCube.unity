@@ -476,8 +476,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: d7e39ab30b3aa4347843354fbb926193, type: 2}
   cube: {fileID: 180411827}
-  cubeOption: 1
+  cubeOption: 2
   absorption: 0.5
+  noiseTiling: 1
 --- !u!114 &1457658193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +494,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: d7e39ab30b3aa4347843354fbb926193, type: 2}
   useRayRandomization: 0
   useIncreasingMarchIntervals: 0
-  marchSteps: 1
+  marchSteps: 10
   raysPerPixel: 1
 --- !u!4 &1457658194
 Transform:

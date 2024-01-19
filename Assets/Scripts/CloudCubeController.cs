@@ -9,9 +9,11 @@ public class CloudCubeController : MonoBehaviour
     public enum CubeOptions {
         RayIntersect,
         ConstantBeers,
+        NoiseBeers,
     };
     public CubeOptions cubeOption = CubeOptions.RayIntersect;
     public float absorption = 0.1f;
+    public float noiseTiling = 1.0f;
     void Start()
     {
         cube.GetComponent<MeshRenderer>().enabled = false;
@@ -24,5 +26,6 @@ public class CloudCubeController : MonoBehaviour
         material.SetFloat("_CubeLength", cube.transform.localScale.x);
         material.SetInt("_CubeOptions", (int)cubeOption);
         material.SetFloat("_Absorption", absorption);
+        material.SetFloat("_NoiseTiling", noiseTiling);
     }
 }
