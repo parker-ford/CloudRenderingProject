@@ -49,7 +49,7 @@ Shader "CloudCube/02_CubeBeers"
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
                 float3 min = cubePosition - cubeLength / 2;
                 float3 max = cubePosition + cubeLength / 2;
-                return p.x > min.x && p.x < max.x && p.y > min.y && p.y < max.y && p.z > min.z && p.z < max.z;
+                return p.x >= min.x && p.x <= max.x && p.y >= min.y && p.y <= max.y && p.z >= min.z && p.z <= max.z;
             }
 
             float4 cubeNoiseBeerLaw(v2f i){
@@ -57,11 +57,12 @@ Shader "CloudCube/02_CubeBeers"
                 float3 rayOrigin = getCameraOriginInWorld();
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
                 float4 cubeCol = float4(0,1,0,1);
+                float cubeOffset = _CubeLength * .1;
                 intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
                 float density = 0;
                 if(cubeIntersect.intersects){
-                    float3 enterPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.x;
-                    float3 exitPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.y;
+                    float3 enterPoint = rayOrigin + rayDir * (cubeIntersect.intersectPoints.x + cubeOffset);
+                    float3 exitPoint = rayOrigin + rayDir * (cubeIntersect.intersectPoints.y - cubeOffset);
                     float distance = length(exitPoint - enterPoint);
                     float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
                     float distPerStep = maxDistance / _MarchSteps;
@@ -69,7 +70,8 @@ Shader "CloudCube/02_CubeBeers"
                     [unroll(10)]
                     for(int j = 0; j < _MarchSteps; j++){
                         float3 pos = getMarchPosition(rayOrigin, rayDir, cubeIntersect.intersectPoints.x, float(j), distPerStep);
-                        if(pointInsideCube(pos, _CubePosition, _CubeLength)){                           
+                        if(pointInsideCube(pos, _CubePosition, _CubeLength)){         
+                            pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                             totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
                         }

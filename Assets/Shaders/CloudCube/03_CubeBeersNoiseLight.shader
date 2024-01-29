@@ -19,6 +19,8 @@ Shader "CloudCube/03_CubeBeersLight"
             #include "UnityCG.cginc"
             #include "../ray.cginc"
 
+            #define SUN_COLOR float3(1., 1., 1.)
+
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -45,8 +47,16 @@ Shader "CloudCube/03_CubeBeersLight"
             float _CubeLength;
             float _Absorption;
             float _NoiseTiling;
-            float3 _LightPosition;
+            float3 _LightDirection;
             int _LightSteps;
+            float _LightAbsorption;
+            float4 _LightCol;
+            float _LightIntensity;
+
+            float henyeyGreenstein( float sunDot, float g) {
+                float g2 = g * g;
+                return (.25 / PI) * ((1. - g2) / pow( 1. + g2 - 2. * g * sunDot, 1.5));
+            }
 
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
                 float3 min = cubePosition - cubeLength / 2;
@@ -55,51 +65,64 @@ Shader "CloudCube/03_CubeBeersLight"
             }
 
             float marchTowardsLight(float3 p){
-                float result = 0;
-                float distPerStep = length(_CubePosition - _LightPosition) / 45;
-                float3 rayDir = normalize(_LightPosition - p);
-                [unroll(5)]
-                for(int i = 1; i < 6; i++){
+                float totalDensity = 0;
+                float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
+                float distPerStep = maxDistance / 5.0 * 0.9;
+                float3 rayDir = normalize(_LightDirection);
+                [unroll(6)]
+                for(int i = 0; i < 6; i++){
                     float3 pos = getMarchPosition(p, rayDir, 0, float(i), distPerStep);
                     if(pointInsideCube(pos, _CubePosition, _CubeLength)){
                         float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
-                        result += tex3D(_Noise3D, samplePos).r * distPerStep;
+                        totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
                     }
                 }
 
-                return exp(-result * _Absorption);
-                // return result;
+                //return exp(-result * _LightAbsorption);
+                //return _LightIntensity * exp(-totalDensity * _LightAbsorption);
+                return _LightIntensity * exp(-totalDensity * _LightAbsorption) * (1. - exp(-totalDensity * 2.));
+
             }
 
             float4 cubeLight(v2f i){
                 float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
-                float4 cubeCol = float4(1,1,1,1);
+                float4 cubeCol = float4(135.0/256.0, 206.0/256.0, 235.0/256.0, 0);
                 intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
-                float density = 0;
+                float alpha = 0;
                 float lightDensity = 0;
+                float lightDot = max(0., dot(rayDir, _LightDirection));
+                float hgPhase = lerp(henyeyGreenstein(lightDot, .4), henyeyGreenstein(lightDot, -.1), .5);
                 if(cubeIntersect.intersects){
-                    float3 enterPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.x;
-                    float3 exitPoint = rayOrigin + rayDir * cubeIntersect.intersectPoints.y;
-                    float distance = length(exitPoint - enterPoint);
                     float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
                     float distPerStep = maxDistance / _MarchSteps;
                     float totalDensity = 0;
+                    float4 interScatterTrans = float4(0,0,0,1);
                     [unroll(5)]
-                    for(int j = 0; j < 5; j++){
+                    for(int j = 0; j < _MarchSteps; j++){
                         float3 pos = getMarchPosition(rayOrigin, rayDir, cubeIntersect.intersectPoints.x, float(j), distPerStep);
-                        if(pointInsideCube(pos, _CubePosition, _CubeLength)){                           
-                            float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
-                            totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
-                            lightDensity += marchTowardsLight(pos) * distPerStep;
+                        float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
+                        float density = tex3D(_Noise3D, samplePos);
+                        if(pointInsideCube(pos, _CubePosition, _CubeLength)){
+                            //illumination
+                            float3 luminance = SUN_COLOR * hgPhase * marchTowardsLight(pos) * density;
+                            //float3 luminance = SUN_COLOR  * marchTowardsLight(pos) * density;
+                            float transmittance = exp(-density * distPerStep);
+
+                            float3 integScatter = (luminance - luminance * transmittance) * (1. / density);
+                            interScatterTrans.rgb += interScatterTrans.a * integScatter;
+                            interScatterTrans.a *= transmittance;
+
+                            //
+                            totalDensity += density * distPerStep;
                         }
                     }
-                    density = 1 - exp(-totalDensity * _Absorption);
+                    cubeCol = float4(saturate(interScatterTrans.rgb), interScatterTrans.a);
+                    alpha = 1 - exp(-totalDensity * _Absorption);
                 }
-                // float light = exp(-lightDensity * _Absorption);
-                return float4(lightDensity,lightDensity,lightDensity,1);
-                //return lerp(mainCol, cubeCol * lightDensity, density);
+                return lerp(mainCol, cubeCol, alpha);
+                //return float4(hgPhase, hgPhase, hgPhase, 1.);
             }
 
             

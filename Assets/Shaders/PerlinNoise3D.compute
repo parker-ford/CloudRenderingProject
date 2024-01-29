@@ -17,8 +17,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float3 uvw = float3(id.xyz) / resolution;
     Pixel pixel = pixels[id.x + id.y * resolution + id.z * resolution * resolution];
 
-    float noise = perlinNoise_3D(uvw, 8.0);
+    float noise = perlinNoise_3D_fbm(uvw, 0.8, 8.0, 6);
     noise = (noise + 1.0) / 2.0;
+    noise = noise - 0.15;
+    noise = saturate(noise);
 
     float4 color = float4(noise, noise, noise, 1.0);
 

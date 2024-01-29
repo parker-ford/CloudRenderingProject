@@ -232,6 +232,8 @@ intersectData cubeIntersection(float3 rayOrigin, float3 rayDir, float3 pos, floa
     upVectors[5] = float3(-1,0,0);
     rightVectors[5] = float3(0,0,1);
 
+    
+
     for(int i = 0; i < 6; i++){
         float3 n = upVectors[i];
         float3 u = rightVectors[i];

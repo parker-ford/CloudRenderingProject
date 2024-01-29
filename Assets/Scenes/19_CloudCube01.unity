@@ -508,7 +508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 0ab26cecf8ad2a94cace87ef7c455d56, type: 2}
   cube: {fileID: 180411827}
-  absorption: 0.1
+  absorption: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

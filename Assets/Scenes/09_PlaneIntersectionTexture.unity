@@ -258,6 +258,7 @@ GameObject:
   - component: {fileID: 606536479}
   - component: {fileID: 606536482}
   - component: {fileID: 606536483}
+  - component: {fileID: 606536484}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -352,7 +353,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 2fbfbaf8d498ac64eb3a0d771dd3f51f, type: 2}
-  myLight: {fileID: 585553302}
 --- !u!114 &606536483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,7 +365,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aa2b9865e704f7469814ba384421dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useMouse: 0
+--- !u!114 &606536484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606536478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4a54756a816894a91c2d7824329325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveNormalSpeed: 10
+  moveFastSpeed: 20
+  rotationSpeed: 2000
 --- !u!1001 &5230103051265794022
 PrefabInstance:
   m_ObjectHideFlags: 0

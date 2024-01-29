@@ -8,7 +8,11 @@ public class CloudCubeController03 : MonoBehaviour
     public GameObject cube;
     public float absorption = 0.1f;
     public float noiseTiling = 24;
-    public GameObject myLight;
+    // public GameObject myLight;
+    public MyDirectionalLight myLight;
+    public float lightAbsorption = 1;
+    public Color lightColor = Color.white;
+    public float lightIntensity = 1;
     void Start()
     {
         cube.GetComponent<MeshRenderer>().enabled = false;
@@ -21,7 +25,10 @@ public class CloudCubeController03 : MonoBehaviour
         material.SetFloat("_CubeLength", cube.transform.localScale.x);
         material.SetFloat("_Absorption", absorption);
         material.SetFloat("_NoiseTiling", noiseTiling);
-        material.SetVector("_LightPosition", myLight.transform.position);
-
+        //material.SetVector("_LightPosition", myLight.transform.position);
+        material.SetVector("_LightDirection", myLight.lightDirection);
+        material.SetFloat("_LightAbsorption", lightAbsorption);
+        material.SetColor("_LightColor", lightColor);
+        material.SetFloat("_LightIntensity", lightIntensity);
     }
 }
