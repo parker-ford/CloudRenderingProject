@@ -13,6 +13,8 @@ public class CloudCubeController03 : MonoBehaviour
     public float lightAbsorption = 1;
     public Color lightColor = Color.white;
     public float lightIntensity = 1;
+    public bool useBeersPowder = false;
+    public bool useHenyeyGreenstein = false;
     void Start()
     {
         cube.GetComponent<MeshRenderer>().enabled = false;
@@ -30,5 +32,7 @@ public class CloudCubeController03 : MonoBehaviour
         material.SetFloat("_LightAbsorption", lightAbsorption);
         material.SetColor("_LightColor", lightColor);
         material.SetFloat("_LightIntensity", lightIntensity);
+        material.SetInt("_UseBeersPowder", useBeersPowder ? 1 : 0);
+        material.SetInt("_UseHenyeyGreenstein", useHenyeyGreenstein ? 1 : 0);
     }
 }

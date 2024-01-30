@@ -52,6 +52,8 @@ Shader "CloudCube/03_CubeBeersLight"
             float _LightAbsorption;
             float4 _LightCol;
             float _LightIntensity;
+            int _UseBeersPowder;
+            int _UseHenyeyGreenstein;
 
             float henyeyGreenstein( float sunDot, float g) {
                 float g2 = g * g;
@@ -78,9 +80,12 @@ Shader "CloudCube/03_CubeBeersLight"
                     }
                 }
 
-                //return exp(-result * _LightAbsorption);
-                //return _LightIntensity * exp(-totalDensity * _LightAbsorption);
-                return _LightIntensity * exp(-totalDensity * _LightAbsorption) * (1. - exp(-totalDensity * 2.));
+                if(_UseBeersPowder){
+                    return _LightIntensity * exp(-totalDensity * _LightAbsorption) * (1. - exp(-totalDensity * 10.));
+                }
+                else{
+                    return _LightIntensity * exp(-totalDensity * _LightAbsorption);
+                }
 
             }
 
@@ -99,22 +104,28 @@ Shader "CloudCube/03_CubeBeersLight"
                     float distPerStep = maxDistance / _MarchSteps;
                     float totalDensity = 0;
                     float4 interScatterTrans = float4(0,0,0,1);
-                    [unroll(5)]
+                    [unroll(8)]
                     for(int j = 0; j < _MarchSteps; j++){
                         float3 pos = getMarchPosition(rayOrigin, rayDir, cubeIntersect.intersectPoints.x, float(j), distPerStep);
                         float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                         float density = tex3D(_Noise3D, samplePos);
                         if(pointInsideCube(pos, _CubePosition, _CubeLength)){
-                            //illumination
-                            float3 luminance = SUN_COLOR * hgPhase * marchTowardsLight(pos) * density;
-                            //float3 luminance = SUN_COLOR  * marchTowardsLight(pos) * density;
-                            float transmittance = exp(-density * distPerStep);
 
+                            //illumination
+                            float3 luminance = float3(0,0,0);
+                            if(_UseHenyeyGreenstein){
+                                luminance = SUN_COLOR * hgPhase * marchTowardsLight(pos) * density;
+                            }
+                            else{
+                                luminance = SUN_COLOR * marchTowardsLight(pos) * density;
+                            }
+
+                            float transmittance = exp(-density * distPerStep);
                             float3 integScatter = (luminance - luminance * transmittance) * (1. / density);
                             interScatterTrans.rgb += interScatterTrans.a * integScatter;
                             interScatterTrans.a *= transmittance;
 
-                            //
+                            //density
                             totalDensity += density * distPerStep;
                         }
                     }
@@ -134,7 +145,7 @@ Shader "CloudCube/03_CubeBeersLight"
             {
                 setPixelID(i.uv);
                 float4 color = 0;
-                [unroll(2)]
+                [unroll(4)]
                  for(int j = 0; j < _RayPerPixel; j++){
                     color += getRayColor(i);
                 }

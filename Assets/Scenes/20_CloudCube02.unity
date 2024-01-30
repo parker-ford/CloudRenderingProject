@@ -475,7 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 95cd016b9128f1a4a9f516db408ba00e, type: 2}
-  useRayRandomization: 1
+  useRayRandomization: 0
   useIncreasingMarchIntervals: 0
   marchSteps: 10
   raysPerPixel: 1
