@@ -15,7 +15,7 @@ public class MyDirectionalLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lightDirection = transform.position.normalized;
+        lightDirection = -transform.position.normalized;
         transform.up = lightDirection;
     }
 }

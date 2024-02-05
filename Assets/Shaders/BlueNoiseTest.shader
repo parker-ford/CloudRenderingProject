@@ -51,6 +51,9 @@ Shader "Parker/BlueNoiseTest"
             float _CubeLength;
             float _Absorption;
             float _NoiseTiling;
+            float3 _LightDir;
+            float _LightIntensity;
+            float _LightAbsorption;
 
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
                 float3 min = cubePosition - cubeLength / 2;
@@ -59,10 +62,46 @@ Shader "Parker/BlueNoiseTest"
                 return p.x >= min.x - offset && p.x <= max.x + offset && p.y >= min.y - offset && p.y <= max.y + offset && p.z >= min.z - offset && p.z <= max.z + offset;
             }
 
+            float calculateLuminance(float3 startPos, float blueNoiseSample){
+
+                float4 intScatterTrans = float4(0,0,0,1);
+
+
+                float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
+                float distPerStep = maxDistance / 6.0 * 0.7;
+                //float distPerStep = 0.25;
+                float totalDensity = 0;
+                float3 rayDir = normalize(-_LightDir);
+                for(int i = 0; i < 6; i++){
+                    float3 pos = startPos + (rayDir) * (float(i) * (distPerStep));
+                    if(pointInsideCube(pos, _CubePosition, _CubeLength)){
+                            float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
+                            
+                            float extinction = tex3D(_Noise3D, samplePos).r;
+                            totalDensity += extinction * distPerStep;
+
+                            // float clampedExtinction = max(extinction, 0.0001);
+                            // float transmittance = exp(-extinction * distPerStep * _LightAbsorption);
+
+                            // float luminance = 1;
+                            // float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
+
+                            // intScatterTrans.rgb += intScatterTrans.a * integScatter;
+                            // intScatterTrans.a *= transmittance;
+                    }
+                }
+
+                // return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
+                return _LightIntensity * float3(1,1,1) * exp(-totalDensity * _LightAbsorption);
+                //return totalDensity;
+            }
+
+
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float blueNoiseSample = tex2D(_BlueNoise, (i.uv + 0.5) * _CameraAspect * (_ScreenParams.x / 64.0)).x;
-                //blueNoiseSample = fract(blueNoiseSample + float(_Time.y % 32) * GOLDEN_RATIO);
+                // blueNoiseSample = fract(blueNoiseSample + float(_Time.y % 32) * GOLDEN_RATIO);
 
 
                 float3 rayDir = getPixelRayInWorld(i.uv);
@@ -72,27 +111,52 @@ Shader "Parker/BlueNoiseTest"
                 float4 cubeCol = float4(0,1,0,1);
                 intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
                 float density = 0;
+                float4 intScatterTrans = float4(0,0,0,0);
+                float totalLuminance = 0;
                 if(cubeIntersect.intersects){
                     float3 enterPoint = rayOrigin + rayDir * (cubeIntersect.intersectPoints.x);
-                    float3 exitPoint = rayOrigin + rayDir * (cubeIntersect.intersectPoints.y);
-                    float distance = length(exitPoint - enterPoint);
                     float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
                     float distPerStep = maxDistance / _MarchSteps;
+                    float cameraRayDist = (cubeIntersect.intersectPoints.x) += blueNoiseSample * distPerStep;
+
                     float totalDensity = 0;
-                    [unroll(50)]
+                    intScatterTrans = float4(0,0,0,1);
+                    [unroll(20)]
                     for(int j = 0; j < _MarchSteps; j++){
-                        // float3 pos = getMarchPosition(rayOrigin, rayDir, cubeIntersect.intersectPoints.x, float(j), distPerStep);
                         float3 pos = enterPoint + rayDir * (float(j) * (distPerStep * blueNoiseSample));
+                        //float3 pos = rayOrigin + rayDir * cameraRayDist;
+                        //float3 pos = enterPoint + rayDir * (float(j) * distPerStep);
                         if(pointInsideCube(pos, _CubePosition, _CubeLength)){         
                             pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
+                            
+
+                            float extinction = tex3D(_Noise3D, samplePos).r;
+                            float clampedExtinction = max(extinction, 0.0001);
+                            float transmittance = exp(-extinction * distPerStep);
+
+                            float luminance = calculateLuminance(pos, blueNoiseSample) * extinction;
+
+                            //Debug
+                            totalLuminance += luminance;
+
+                            float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
+
+                            intScatterTrans.rgb += intScatterTrans.a * integScatter;
+                            intScatterTrans.a *= transmittance;
+
+
                             totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
                         }
+
+                        cameraRayDist += distPerStep;
                     }
                     density = 1 - exp(-totalDensity * _Absorption);
+                    intScatterTrans.a = 1 - intScatterTrans.a;
                 }
 
-                return lerp(mainCol, cubeCol, density);
+                return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                // return lerp(mainCol, cubeCol, density);
 
             }
             ENDCG
