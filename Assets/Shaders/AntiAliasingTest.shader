@@ -58,7 +58,8 @@ Shader "Parker/AntiAliasingTest"
 
 
 
-                float2 imageSample = i.uv + _Time.y * 1.1;
+                // float2 imageSample = i.uv + _Time.y * 1.1;
+                float2 imageSample = i.uv;
 
                 if(_Mode == 0){
                     if(tex2D(_ImageTex, imageSample).r > blueNoiseSample.r){

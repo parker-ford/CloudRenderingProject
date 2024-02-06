@@ -6,6 +6,7 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
 {
     public Material material;
     public Material anitAliasingMaterial;
+    public Material blurMaterial;
     public int numSamples = 1;
     private int numSamplesFinal;
     int frame = 0;
@@ -17,11 +18,18 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         None = 2,
     };
     public NoiseAnimationMode noiseAnimationMode = NoiseAnimationMode.GoldenRatio;
+    public bool useBlur = false;
+    public enum BlurMode {
+        Gaussian3x3 = 0,
+        Gaussian5x5 = 1,
+    }
+    public BlurMode blurMode = BlurMode.Gaussian3x3;
 
     void Start()
     {
         Debug.Assert(material != null);
         Debug.Assert(anitAliasingMaterial != null);
+        Debug.Assert(blurMaterial != null);
         
         numSamplesFinal = numSamples;
         buffers = new RenderTexture[numSamplesFinal];
@@ -38,8 +46,10 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         material.SetInt("_Frame", frame);
         material.SetInt("_NumSamples", numSamplesFinal);
         material.SetInt("_Mode", (int)noiseAnimationMode);
+        blurMaterial.SetInt("_Mode", (int)blurMode);
 
-        if(material != null || anitAliasingMaterial != null){
+
+        if(material != null && anitAliasingMaterial != null && blurMaterial != null){
             //Graphics.Blit(source, destination, material);
 
             //Before frame threshold
@@ -71,7 +81,14 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
                 RenderTexture.ReleaseTemporary(temp);
             }
 
-            Graphics.Blit(antiAliasedBuffer, destination);
+            if(useBlur){
+                Graphics.Blit(antiAliasedBuffer, destination, blurMaterial);
+            }
+            else{
+                Graphics.Blit(antiAliasedBuffer, destination);
+            }
+            
+
             //Graphics.Blit(source, buffers[frame % numSamplesFinal], material);
 
 
