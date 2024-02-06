@@ -24,6 +24,7 @@ Shader "Parker/DimensionalProfile3D"
             #define ATMOSPHERE_UPPER_BOUND 420.0
 
             #define CLOUD_FREQUENCY 2048.0
+            #define CLOUD_COVERAGE 0.5
 
             struct appdata
             {
@@ -57,7 +58,7 @@ Shader "Parker/DimensionalProfile3D"
                 return (p.y - ATMOSPHERE_LOWER_BOUND) / (ATMOSPHERE_UPPER_BOUND - ATMOSPHERE_LOWER_BOUND);
             }
 
-            float sampleCloudDensity(float3 pos, float y){
+            float cloudBase(float3 pos, float y){
                 float4 lowFreqNoise = tex3D(_Cloud3DNoiseTexture, pos);
                 float lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
                 float baseCloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
@@ -65,6 +66,16 @@ Shader "Parker/DimensionalProfile3D"
                 baseCloud = saturate(baseCloud);
                 return baseCloud;
             }
+
+            float sampleCloudDensity(float3 pos, float y){
+
+
+                float d = cloudBase(pos, y);
+                //d = remap_f(d, CLOUD_COVERAGE, 1.) * (CLOUD_COVERAGE);
+                d *= cloudGradient(y);
+                return d;
+            }
+
 
             float4 getRayColor(v2f i){
 

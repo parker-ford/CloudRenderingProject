@@ -1,0 +1,87 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ApplyImageEffectAntiAliasing : MonoBehaviour
+{
+    public Material material;
+    public Material anitAliasingMaterial;
+    public int numSamples = 1;
+    private int numSamplesFinal;
+    int frame = 0;
+    RenderTexture[] buffers;
+    RenderTexture antiAliasedBuffer;
+    public enum NoiseAnimationMode {
+        GoldenRatio = 0,
+        Uniform = 1,
+        None = 2,
+    };
+    public NoiseAnimationMode noiseAnimationMode = NoiseAnimationMode.GoldenRatio;
+
+    void Start()
+    {
+        Debug.Assert(material != null);
+        Debug.Assert(anitAliasingMaterial != null);
+        
+        numSamplesFinal = numSamples;
+        buffers = new RenderTexture[numSamplesFinal];
+        for(int i = 0; i < numSamplesFinal; i++){
+            buffers[i] = new RenderTexture(Screen.width, Screen.height, 0);
+        }
+        antiAliasedBuffer = new RenderTexture(Screen.width, Screen.height, 0);
+    }
+
+    void OnRenderImage(RenderTexture source, RenderTexture destination){
+
+        anitAliasingMaterial.SetInt("_Frame", frame);
+        anitAliasingMaterial.SetInt("_NumSamples", numSamplesFinal);
+        material.SetInt("_Frame", frame);
+        material.SetInt("_NumSamples", numSamplesFinal);
+        material.SetInt("_Mode", (int)noiseAnimationMode);
+
+        if(material != null || anitAliasingMaterial != null){
+            //Graphics.Blit(source, destination, material);
+
+            //Before frame threshold
+            if(frame < numSamplesFinal){
+                Graphics.Blit(source, buffers[frame], material);
+                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame]);
+                RenderTexture temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
+                Graphics.Blit(antiAliasedBuffer, temp, anitAliasingMaterial);
+                Graphics.Blit(temp,antiAliasedBuffer);
+                RenderTexture.ReleaseTemporary(temp);
+            }
+            else{
+
+                //Subract oldest frame
+                anitAliasingMaterial.SetInt("_Mode",0);
+                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamplesFinal]);
+                RenderTexture temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
+                Graphics.Blit(antiAliasedBuffer, temp,  anitAliasingMaterial);
+                Graphics.Blit(temp,antiAliasedBuffer);
+                RenderTexture.ReleaseTemporary(temp);
+
+                //Add new frame
+                Graphics.Blit(source, buffers[frame % numSamplesFinal], material);
+                anitAliasingMaterial.SetInt("_Mode", 1);
+                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamplesFinal]);
+                temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
+                Graphics.Blit(antiAliasedBuffer, temp, anitAliasingMaterial);
+                Graphics.Blit(temp,antiAliasedBuffer);
+                RenderTexture.ReleaseTemporary(temp);
+            }
+
+            Graphics.Blit(antiAliasedBuffer, destination);
+            //Graphics.Blit(source, buffers[frame % numSamplesFinal], material);
+
+
+        }
+        else{
+            Graphics.Blit(source,destination);
+            Debug.LogError("Image effect material is null");
+        }
+
+        frame++;
+    }
+
+}

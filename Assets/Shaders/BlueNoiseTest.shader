@@ -64,35 +64,46 @@ Shader "Parker/BlueNoiseTest"
 
             float calculateLuminance(float3 startPos, float blueNoiseSample){
 
+                float noiseKernel[6 * 3] = {
+                     .38051305,  .92453449, -.02111345,
+                    -.50625799, -.03590792, -.86163418,
+                    -.32509218, -.94557439,  .01428793,
+                     .09026238, -.27376545,  .95755165,
+                     .28128598,  .42443639, -.86065785,
+                    -.16852403,  .14748697,  .97460106
+                };
+
                 float4 intScatterTrans = float4(0,0,0,1);
-
-
                 float maxDistance = sqrt(_CubeLength * _CubeLength + _CubeLength * _CubeLength + _CubeLength * _CubeLength);
-                float distPerStep = maxDistance / 6.0 * 0.7;
-                //float distPerStep = 0.25;
-                float totalDensity = 0;
+                float distPerStep = maxDistance / 6.0;
                 float3 rayDir = normalize(-_LightDir);
+                float lightRayDist = rayDir * distPerStep;
+                float consSpread = length(lightRayDist);
+                float totalDensity = 0;
                 for(int i = 0; i < 6; i++){
-                    float3 pos = startPos + (rayDir) * (float(i) * (distPerStep));
+                    // float3 pos = startPos + (rayDir) * (float(i) * (distPerStep));
+                    float3 pos = startPos + (rayDir) * (float(i) * (distPerStep * blueNoiseSample));
+                    //pos += distPerStep * float3(noiseKernel[i * 3], noiseKernel[i * 3 + 1], noiseKernel[i * 3 + 2]) * float(i) * 0.5;
+
                     if(pointInsideCube(pos, _CubePosition, _CubeLength)){
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                             
                             float extinction = tex3D(_Noise3D, samplePos).r;
                             totalDensity += extinction * distPerStep;
 
-                            // float clampedExtinction = max(extinction, 0.0001);
-                            // float transmittance = exp(-extinction * distPerStep * _LightAbsorption);
+                            float clampedExtinction = max(extinction, 0.0001);
+                            float transmittance = exp(-extinction * distPerStep * _LightAbsorption);
 
-                            // float luminance = 1;
-                            // float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
+                            float luminance = 1;
+                            float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
 
-                            // intScatterTrans.rgb += intScatterTrans.a * integScatter;
-                            // intScatterTrans.a *= transmittance;
+                            intScatterTrans.rgb += intScatterTrans.a * integScatter;
+                            intScatterTrans.a *= transmittance;
                     }
                 }
 
-                // return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
-                return _LightIntensity * float3(1,1,1) * exp(-totalDensity * _LightAbsorption);
+                return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
+                //return _LightIntensity * float3(1,1,1) * exp(-totalDensity * _LightAbsorption);
                 //return totalDensity;
             }
 
@@ -101,6 +112,7 @@ Shader "Parker/BlueNoiseTest"
             fixed4 frag (v2f i) : SV_Target
             {
                 float blueNoiseSample = tex2D(_BlueNoise, (i.uv + 0.5) * _CameraAspect * (_ScreenParams.x / 64.0)).x;
+                //return float4(blueNoiseSample, blueNoiseSample, blueNoiseSample, 1.0);
                 // blueNoiseSample = fract(blueNoiseSample + float(_Time.y % 32) * GOLDEN_RATIO);
 
 
@@ -130,23 +142,20 @@ Shader "Parker/BlueNoiseTest"
                             pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                             
-
                             float extinction = tex3D(_Noise3D, samplePos).r;
                             float clampedExtinction = max(extinction, 0.0001);
                             float transmittance = exp(-extinction * distPerStep);
-
                             float luminance = calculateLuminance(pos, blueNoiseSample) * extinction;
 
                             //Debug
                             totalLuminance += luminance;
+                            totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
 
                             float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
-
                             intScatterTrans.rgb += intScatterTrans.a * integScatter;
                             intScatterTrans.a *= transmittance;
 
 
-                            totalDensity += tex3D(_Noise3D, samplePos).r * distPerStep;
                         }
 
                         cameraRayDist += distPerStep;
@@ -156,6 +165,7 @@ Shader "Parker/BlueNoiseTest"
                 }
 
                 return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                 // return lerp(mainCol, cubeCol, density);
 
             }
