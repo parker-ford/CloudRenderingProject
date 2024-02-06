@@ -54,7 +54,7 @@ Shader "Parker/BlueNoiseTest"
             float3 _LightDir;
             float _LightIntensity;
             float _LightAbsorption;
-            int _Frame;
+            uint _Frame;
             int _NumSamples;
 
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
@@ -112,9 +112,8 @@ Shader "Parker/BlueNoiseTest"
                 float consSpread = length(lightRayDist);
                 float totalDensity = 0;
                 for(int i = 0; i < 6; i++){
-                    // float3 pos = startPos + (rayDir) * (float(i) * (distPerStep));
-                    float3 pos = startPos + (rayDir) * (float(i) * (distPerStep * blueNoiseSample));
-                    //pos += distPerStep * float3(noiseKernel[i * 3], noiseKernel[i * 3 + 1], noiseKernel[i * 3 + 2]) * float(i) * 0.5;
+                    float3 pos = startPos + (rayDir) * (float(i) + fract(blueNoiseSample + float(i) * GOLDEN_RATIO)) * (distPerStep);
+                    
 
                     if(pointInsideCube(pos, _CubePosition, _CubeLength)){
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
@@ -145,11 +144,9 @@ Shader "Parker/BlueNoiseTest"
             {
                 float2 pixel = i.uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
                 float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
-                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
-                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame % _NumSamples) * GOLDEN_RATIO);
-                blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame % _NumSamples) * GOLDEN_RATIO);
-
-                //return blueNoiseSample;
+                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame) * GOLDEN_RATIO);
+                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame) * GOLDEN_RATIO);
+                blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame) * GOLDEN_RATIO);
 
 
                 float3 rayDir = getPixelRayInWorldLocal(i.uv, blueNoiseSample.rg);
@@ -170,15 +167,15 @@ Shader "Parker/BlueNoiseTest"
                     intScatterTrans = float4(0,0,0,1);
                     [unroll(15)]
                     for(int j = 0; j < _MarchSteps; j++){
-                        float3 pos = enterPoint + rayDir * (float(j) * (distPerStep));
+                        float3 pos = enterPoint + rayDir * ((float(j) + fract(blueNoiseSample.b + float(j) * GOLDEN_RATIO)) * (distPerStep));
                         if(pointInsideCube(pos, _CubePosition, _CubeLength)){         
                             pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                             
                             float extinction = tex3D(_Noise3D, samplePos).r;
                             float clampedExtinction = max(extinction, 0.0001);
-                            float transmittance = exp(-extinction * distPerStep);
-                            float luminance = calculateLuminance(pos, blueNoiseSample) * extinction;
+                            float transmittance = exp(-extinction * distPerStep * _Absorption);
+                            float luminance = calculateLuminance(pos, blueNoiseSample.b) * extinction;
 
                             //Debug
                             totalLuminance += luminance;
@@ -197,8 +194,8 @@ Shader "Parker/BlueNoiseTest"
                     intScatterTrans.a = 1 - intScatterTrans.a;
                 }
 
-                // return lerp(mainCol, intScatterTrans, intScatterTrans.a);
-                return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                 // return lerp(mainCol, cubeCol, density);
 
             }
