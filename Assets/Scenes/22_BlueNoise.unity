@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 154974516}
   - component: {fileID: 154974515}
   - component: {fileID: 154974518}
+  - component: {fileID: 154974520}
   - component: {fileID: 154974519}
   m_Layer: 0
   m_Name: Main Camera
@@ -224,7 +225,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 154974514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 321d1300049e7394bb184fdfa97bc75f, type: 3}
   m_Name: 
@@ -245,6 +246,25 @@ MonoBehaviour:
   moveNormalSpeed: 10
   moveFastSpeed: 20
   rotationSpeed: 1000
+--- !u!114 &154974520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154974514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddce5b059f492d640b7a2f1ca49c3f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 462e49975dc3f544cb0d98e5b483bcb6, type: 2}
+  anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
+  blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
+  numSamples: 5
+  noiseAnimationMode: 0
+  useBlur: 0
+  blurMode: 0
 --- !u!1 &271122893
 GameObject:
   m_ObjectHideFlags: 0

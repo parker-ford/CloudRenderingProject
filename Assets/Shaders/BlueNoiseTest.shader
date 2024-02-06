@@ -54,12 +54,43 @@ Shader "Parker/BlueNoiseTest"
             float3 _LightDir;
             float _LightIntensity;
             float _LightAbsorption;
+            int _Frame;
+            int _NumSamples;
 
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
                 float3 min = cubePosition - cubeLength / 2;
                 float3 max = cubePosition + cubeLength / 2;
                 float offset = 0.0001; // Small offset to reduce aliasing
                 return p.x >= min.x - offset && p.x <= max.x + offset && p.y >= min.y - offset && p.y <= max.y + offset && p.z >= min.z - offset && p.z <= max.z + offset;
+            }
+
+            
+            float3 getPixelRayInWorldLocal(float2 uv, float2 offset){
+
+                //Shift uv by random amount
+                // if(checkBit(_RaycastOptions, RANDOM_BIT)){
+                //     uv = float2(uv.x + (1. / _ScreenParams.x) * random(), uv.y + (1. / _ScreenParams.y) * random());
+                // }
+                // uv += (offset / _ScreenParams.xy);
+                uv = float2(uv.x + (1. / _ScreenParams.x) * offset.x, uv.y + (1. / _ScreenParams.y) * offset.y);
+
+                //Convert to screen space uv (-1 - 1)
+                uv = remap_f2(uv, 0, 1, -1, 1);
+
+                //Account for aspect ratio and FOV
+                uv *= tan_d(_CameraFOV * 0.5);
+                uv.x *= _CameraAspect;
+
+                //Get ray
+                //TODO: Test if the z component should be -1 or 1
+                float3 ray = normalize(float3(uv.x, uv.y, 1.0));
+
+                //Transform ray to world space
+                float4 rayWorldHomog = mul(unity_CameraToWorld, float4(ray, 0.0));
+                float3 rayWorld = normalize(rayWorldHomog.xyz);
+
+                return rayWorld;
+
             }
 
             float calculateLuminance(float3 startPos, float blueNoiseSample){
@@ -109,18 +140,22 @@ Shader "Parker/BlueNoiseTest"
 
 
 
+
             fixed4 frag (v2f i) : SV_Target
             {
-                float blueNoiseSample = tex2D(_BlueNoise, (i.uv + 0.5) * _CameraAspect * (_ScreenParams.x / 64.0)).x;
-                //return float4(blueNoiseSample, blueNoiseSample, blueNoiseSample, 1.0);
-                // blueNoiseSample = fract(blueNoiseSample + float(_Time.y % 32) * GOLDEN_RATIO);
+                float2 pixel = i.uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
+                float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
+                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+
+                //return blueNoiseSample;
 
 
-                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayDir = getPixelRayInWorldLocal(i.uv, blueNoiseSample.rg);
+                // float3 rayDir = getPixelRayInWorld(i.uv);
                 float3 rayOrigin = getCameraOriginInWorld();
-
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
-                float4 cubeCol = float4(0,1,0,1);
                 intersectData cubeIntersect = cubeIntersection(rayOrigin, rayDir, _CubePosition, _CubeLength);
                 float density = 0;
                 float4 intScatterTrans = float4(0,0,0,0);
@@ -133,11 +168,9 @@ Shader "Parker/BlueNoiseTest"
 
                     float totalDensity = 0;
                     intScatterTrans = float4(0,0,0,1);
-                    [unroll(20)]
+                    [unroll(15)]
                     for(int j = 0; j < _MarchSteps; j++){
-                        float3 pos = enterPoint + rayDir * (float(j) * (distPerStep * blueNoiseSample));
-                        //float3 pos = rayOrigin + rayDir * cameraRayDist;
-                        //float3 pos = enterPoint + rayDir * (float(j) * distPerStep);
+                        float3 pos = enterPoint + rayDir * (float(j) * (distPerStep));
                         if(pointInsideCube(pos, _CubePosition, _CubeLength)){         
                             pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
@@ -164,8 +197,8 @@ Shader "Parker/BlueNoiseTest"
                     intScatterTrans.a = 1 - intScatterTrans.a;
                 }
 
-                return lerp(mainCol, intScatterTrans, intScatterTrans.a);
-                //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                // return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                 // return lerp(mainCol, cubeCol, density);
 
             }

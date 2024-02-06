@@ -229,6 +229,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 6090a3a38ef8c0b4496d612b6bce8a4e, type: 2}
+  anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
+  blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
+  numSamples: 4
+  noiseAnimationMode: 0
+  useBlur: 0
+  blurMode: 0
 --- !u!1 &917577326
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae06fad579a7964e90c5d23cd0db804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 0}
+  material: {fileID: 2100000, guid: 6090a3a38ef8c0b4496d612b6bce8a4e, type: 2}
   useRayRandomization: 0
   useIncreasingMarchIntervals: 0
   marchSteps: 1
