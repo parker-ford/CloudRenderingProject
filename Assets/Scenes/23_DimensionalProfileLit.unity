@@ -392,7 +392,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
   useRayRandomization: 0
   useIncreasingMarchIntervals: 0
-  marchSteps: 1
+  marchSteps: 15
   raysPerPixel: 1
   rayOffsetWeight: 1
 --- !u!4 &1615217978
@@ -427,6 +427,7 @@ MonoBehaviour:
   lightIntensity: 1
   lightAbsorption: 1
   noiseTiling: 512
+  absoroption: 0.0005
 --- !u!1 &1929042653
 GameObject:
   m_ObjectHideFlags: 0

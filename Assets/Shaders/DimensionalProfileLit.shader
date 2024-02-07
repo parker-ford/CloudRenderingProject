@@ -189,6 +189,7 @@ Shader "Parker/DimensionalProfileLit"
                         samplePos.x = remap_f(pos.x, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
                         samplePos.z = remap_f(pos.z, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
                         samplePos.y = getHeightFract(pos);
+                        return tex3D(_Cloud3DNoiseTexture, samplePos).ggga;
                         float density = tex3D(_Cloud3DNoiseTexture, samplePos).r;
 
                     //     float density = sampleCloudDensity(samplePos, pos.y);

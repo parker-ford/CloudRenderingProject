@@ -426,7 +426,7 @@ float worleyNoise_3D(float3 p, float cellSize){
                 float3 wrappedCell = modulo(cell, float3(1.0, 1.0, 1.0));
 
                 //Generate pseudo random offset based on cell
-                uint seed = seedGen_ui3(uint3(cell.x * _ScreenParams.x, cell.y * _ScreenParams.y, cell.z * _ScreenParams.y));
+                uint seed = seedGen_ui3(uint3(wrappedCell.x * _ScreenParams.x, wrappedCell.y * _ScreenParams.y, wrappedCell.z * _ScreenParams.y));
                 float3 rand = random_3D(seed);
 
                 //Find distance to cell
@@ -441,7 +441,6 @@ float worleyNoise_3D(float3 p, float cellSize){
 
     float result = minDist / interval;
     return result;
-
 }
 
 float worleyNoise_3D_fbm(float3 p, float H, float freq, float numOctaves){

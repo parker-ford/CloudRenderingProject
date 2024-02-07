@@ -2,7 +2,7 @@
 #pragma kernel CSMain
 
 #include "UnityCG.cginc"
-#include "noise.cginc"
+#include "noise2.cginc"
 
 struct Pixel {
     float4 color;

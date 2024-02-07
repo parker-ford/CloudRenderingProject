@@ -338,8 +338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a108185a6b4ed154191316763701cf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureName: Perlin3D
-  computeShader: {fileID: 7200000, guid: f5a326aea18498143896c82ce980cdd7, type: 3}
+  textureName: Worley3D
+  computeShader: {fileID: 7200000, guid: 7d212dda004634d48b69aebc44143211, type: 3}
   resolution: 128
 --- !u!4 &1758422415
 Transform:
