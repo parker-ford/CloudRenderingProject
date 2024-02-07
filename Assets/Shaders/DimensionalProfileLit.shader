@@ -21,7 +21,7 @@ Shader "Parker/DimensionalProfileLit"
             #include "ray.cginc"
 
             #define ATMOSPHERE_LOWER_BOUND 250.0
-            #define ATMOSPHERE_UPPER_BOUND 300.0
+            #define ATMOSPHERE_UPPER_BOUND 750.0
             #define CLOUD_FREQUENCY 2048.0
             #define CLOUD_COVERAGE 0.5
             #define GOLDEN_RATIO 1.61803398875
@@ -46,14 +46,27 @@ Shader "Parker/DimensionalProfileLit"
                 return o;
             }
 
+
+            //Shader Parameters
             sampler2D _MainTex;
-            sampler2D _BlueNoise;
             sampler3D _Cloud3DNoiseTexture;
             float _Absorption;
             float _NoiseTiling;
             float3 _LightDir;
             float _LightIntensity;
             float _LightAbsorption;
+
+            //Anti Aliasing Parameters
+            sampler2D _BlueNoise;
+            uint _Frame;
+            int _NumSamples;
+            int _NoiseMode;
+
+            //Raycast Parameters
+            float _RayOffsetWeight;
+
+
+
 
             float getHeightFract(float3 p){
                 return (p.y - ATMOSPHERE_LOWER_BOUND) / (ATMOSPHERE_UPPER_BOUND - ATMOSPHERE_LOWER_BOUND);
@@ -103,10 +116,58 @@ Shader "Parker/DimensionalProfileLit"
                 return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
             }
 
+            
+            float updateNoiseSample(float noiseSample){
+                if(_NoiseMode == 0){
+                    return fract(noiseSample + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                }
+                else{
+                    return fract(noiseSample + (float(_Frame % _NumSamples) / float(_NumSamples)));
+                }
+            }
+
+            float4 getBlueNoiseSample(v2f i){
+                float2 pixel = i.uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
+                float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
+                blueNoiseSample.r = updateNoiseSample(blueNoiseSample.r);
+                blueNoiseSample.g = updateNoiseSample(blueNoiseSample.g);
+                blueNoiseSample.b = updateNoiseSample(blueNoiseSample.b);
+                blueNoiseSample.a = updateNoiseSample(blueNoiseSample.a);
+                return blueNoiseSample;
+            }
+
+            float3 getPixelRayInWorldLocal(float2 uv, float2 offset){
+
+                //Offset UV
+                //offset *= _RayOffsetWeight;
+                offset *= 0;
+                uv = float2(uv.x + (1. / _ScreenParams.x) * offset.x, uv.y + (1. / _ScreenParams.y) * offset.y);
+
+                //Convert to screen space uv (-1 - 1)
+                uv = remap_f2(uv, 0, 1, -1, 1);
+
+                //Account for aspect ratio and FOV
+                uv *= tan_d(_CameraFOV * 0.5);
+                uv.x *= _CameraAspect;
+
+                //Get ray
+                //TODO: Test if the z component should be -1 or 1
+                float3 ray = normalize(float3(uv.x, uv.y, 1.0));
+
+                //Transform ray to world space
+                float4 rayWorldHomog = mul(unity_CameraToWorld, float4(ray, 0.0));
+                float3 rayWorld = normalize(rayWorldHomog.xyz);
+
+                return rayWorld;
+
+            }
+
+
             fixed4 frag (v2f i) : SV_Target
             {
+                float4 blueNoiseSample = getBlueNoiseSample(i);
                 fixed4 mainCol = tex2D(_MainTex, i.uv);
-                float3 rayDir = getPixelRayInWorld(i.uv);
+                float3 rayDir = getPixelRayInWorldLocal(i.uv, blueNoiseSample.rg);
                 float3 rayOrigin = getCameraOriginInWorld();
 
                 intersectData planeIntersectLower = planeIntersection(rayOrigin, rayDir, float3(0,ATMOSPHERE_LOWER_BOUND,0), float3(0,-1,0));
@@ -117,42 +178,35 @@ Shader "Parker/DimensionalProfileLit"
                     float3 endPos = rayOrigin + rayDir * planeIntersectUpper.intersectPoints.x;
                     float dist = length(endPos - startPos);
                     float distPerStep = dist / (float)_MarchSteps;
-                    float blueNoiseSample = tex2D(_BlueNoise, (i.uv + 0.5) * _CameraAspect * (_ScreenParams.x / 64.0)).x;
-                    //blueNoiseSample = fract(blueNoiseSample + float(_Time.y % 32) * GOLDEN_RATIO);
-                    float cameraRayDist = planeIntersectLower.intersectPoints.x;
-                    cameraRayDist += blueNoiseSample * distPerStep;
                     float totalDensity = 0;
                     float4 intScatterTrans = float4(0,0,0,1);
+                    float offset = 0;
 
-                    for(int step = 0; step < 23; step++){
-                        // float3 pos = startPos + rayDir * float(step) * distPerStep * blueNoiseSample;
-                        //float3 pos = startPos + rayDir * float(step) * distPerStep;
-                        float3 pos = rayOrigin + cameraRayDist * rayDir;
-                        //float3 pos = startPos + rayDir * float(step) * distPerStep + rayDir * blueNoiseSample * distPerStep;
-
+                    [unroll(20)]
+                    for(int step = 0; step < _MarchSteps; step++){
+                        float3 pos = rayOrigin + rayDir * (planeIntersectLower.intersectPoints.x + offset);
                         float3 samplePos;
-                        samplePos.x = remap_f(pos.x, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
-                        samplePos.z = remap_f(pos.z, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
+                        samplePos.x = remap_f(pos.x, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
+                        samplePos.z = remap_f(pos.z, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
                         samplePos.y = getHeightFract(pos);
+                        float density = tex3D(_Cloud3DNoiseTexture, samplePos).r;
 
-                        float density = sampleCloudDensity(samplePos, pos.y);
+                    //     float density = sampleCloudDensity(samplePos, pos.y);
 
                         if(density > 0.001){
                             float extinction = density;
                             float clampedExtinction = max(extinction, 0.0001);
-                            float transmittance = exp(-extinction * distPerStep);
+                            float transmittance = exp(-extinction * distPerStep * _Absorption);
                             float luminance = calculateLuminance(pos, blueNoiseSample) * extinction;
                             float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
                             intScatterTrans.rgb += intScatterTrans.a * integScatter;
                             intScatterTrans.a *= transmittance;
                         }
 
-                        cameraRayDist += (distPerStep * blueNoiseSample);
+                        offset = distPerStep * (float(step) + blueNoiseSample.b);
+                        updateNoiseSample(blueNoiseSample.b);
                     }
-
-
-                    return lerp(mainCol, intScatterTrans, intScatterTrans.a);
-                    //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                    return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                 }
 
                 return mainCol;

@@ -231,7 +231,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 6090a3a38ef8c0b4496d612b6bce8a4e, type: 2}
   anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
   blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
-  numSamples: 3
+  numSamples: 8
   noiseAnimationMode: 0
   useBlur: 0
   blurMode: 0

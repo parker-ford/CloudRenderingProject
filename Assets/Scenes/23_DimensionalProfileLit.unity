@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 152196034}
   - component: {fileID: 152196037}
   - component: {fileID: 152196038}
+  - component: {fileID: 152196039}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -224,14 +225,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152196033}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 321d1300049e7394bb184fdfa97bc75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
-  averageMaterial: {fileID: 2100000, guid: 2b3dff5d8def43d479859fa27c7e3a9d, type: 2}
-  useAverageMaterial: 0
 --- !u!114 &152196038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,6 +246,25 @@ MonoBehaviour:
   moveNormalSpeed: 10
   moveFastSpeed: 20
   rotationSpeed: 1000
+--- !u!114 &152196039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152196033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddce5b059f492d640b7a2f1ca49c3f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
+  anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
+  blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
+  numSamples: 1
+  noiseAnimationMode: 0
+  useBlur: 0
+  blurMode: 0
 --- !u!1 &758162520
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +394,7 @@ MonoBehaviour:
   useIncreasingMarchIntervals: 0
   marchSteps: 1
   raysPerPixel: 1
+  rayOffsetWeight: 1
 --- !u!4 &1615217978
 Transform:
   m_ObjectHideFlags: 0
@@ -407,6 +426,7 @@ MonoBehaviour:
   myDirectionalLight: {fileID: 1929042654}
   lightIntensity: 1
   lightAbsorption: 1
+  noiseTiling: 512
 --- !u!1 &1929042653
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,8 @@ public class ApplyRaycastParameters : MonoBehaviour
     private int raycastOptions = 0;
     private int randomBit = 1;
     private int intervalBit = 2;
+    [Range(0,1)]
+    public float rayOffsetWeight = 1.0f;
 
     void Start()
     {
@@ -28,6 +30,7 @@ public class ApplyRaycastParameters : MonoBehaviour
         // material.SetInt("_UsingRandom", useRayRandomization ? 1 : 0);
         material.SetInt("_MarchSteps", marchSteps);
         material.SetInt("_RayPerPixel", raysPerPixel);
+        material.SetFloat("_RayOffsetWeight", rayOffsetWeight);
 
         raycastOptions = 0;
         if(useRayRandomization){

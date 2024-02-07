@@ -47,7 +47,7 @@ Shader "Parker/AntiAliasingTest"
             sampler2D _ImageTex;
             uint _Frame;
             int _NumSamples;
-            int _Mode;
+            int _NoiseMode;
 
             fixed4 frag (v2f i) : SV_Target
             {
@@ -61,7 +61,7 @@ Shader "Parker/AntiAliasingTest"
                 // float2 imageSample = i.uv + _Time.y * 1.1;
                 float2 imageSample = i.uv;
 
-                if(_Mode == 0){
+                if(_NoiseMode == 0){
                     if(tex2D(_ImageTex, imageSample).r > blueNoiseSample.r){
                         return float4(1, 1, 1, 1);
                     }
@@ -69,7 +69,7 @@ Shader "Parker/AntiAliasingTest"
                         return float4(0, 0, 0, 1);
                     }
                 }
-                else if(_Mode == 1){
+                else if(_NoiseMode == 1){
                     if(tex2D(_ImageTex, imageSample).r > blueNoiseSample.g){
                         return float4(1, 1, 1, 1);
                     }

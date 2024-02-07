@@ -45,7 +45,7 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         anitAliasingMaterial.SetInt("_NumSamples", numSamplesFinal);
         material.SetInt("_Frame", frame);
         material.SetInt("_NumSamples", numSamplesFinal);
-        material.SetInt("_Mode", (int)noiseAnimationMode);
+        material.SetInt("_NoiseMode", (int)noiseAnimationMode);
         blurMaterial.SetInt("_Mode", (int)blurMode);
 
 

@@ -261,7 +261,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 462e49975dc3f544cb0d98e5b483bcb6, type: 2}
   anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
   blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
-  numSamples: 5
+  numSamples: 1
   noiseAnimationMode: 0
   useBlur: 0
   blurMode: 0
@@ -525,6 +525,7 @@ MonoBehaviour:
   useIncreasingMarchIntervals: 0
   marchSteps: 5
   raysPerPixel: 1
+  rayOffsetWeight: 1
 --- !u!4 &1373628015
 Transform:
   m_ObjectHideFlags: 0

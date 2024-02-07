@@ -56,6 +56,8 @@ Shader "Parker/BlueNoiseTest"
             float _LightAbsorption;
             uint _Frame;
             int _NumSamples;
+            float _RayOffsetWeight;
+            
 
             bool pointInsideCube(float3 p, float3 cubePosition, float cubeLength){
                 float3 min = cubePosition - cubeLength / 2;
@@ -72,6 +74,7 @@ Shader "Parker/BlueNoiseTest"
                 //     uv = float2(uv.x + (1. / _ScreenParams.x) * random(), uv.y + (1. / _ScreenParams.y) * random());
                 // }
                 // uv += (offset / _ScreenParams.xy);
+                offset *= _RayOffsetWeight;
                 uv = float2(uv.x + (1. / _ScreenParams.x) * offset.x, uv.y + (1. / _ScreenParams.y) * offset.y);
 
                 //Convert to screen space uv (-1 - 1)
