@@ -74,8 +74,10 @@ Shader "Parker/BlueNoiseTest"
                 //     uv = float2(uv.x + (1. / _ScreenParams.x) * random(), uv.y + (1. / _ScreenParams.y) * random());
                 // }
                 // uv += (offset / _ScreenParams.xy);
+
                 offset *= _RayOffsetWeight;
                 uv = float2(uv.x + (1. / _ScreenParams.x) * offset.x, uv.y + (1. / _ScreenParams.y) * offset.y);
+
 
                 //Convert to screen space uv (-1 - 1)
                 uv = remap_f2(uv, 0, 1, -1, 1);
@@ -147,9 +149,9 @@ Shader "Parker/BlueNoiseTest"
             {
                 float2 pixel = i.uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
                 float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
-                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame) * GOLDEN_RATIO);
-                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame) * GOLDEN_RATIO);
-                blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame) * GOLDEN_RATIO);
+                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame % _NumSamples) * GOLDEN_RATIO);
 
 
                 float3 rayDir = getPixelRayInWorldLocal(i.uv, blueNoiseSample.rg);

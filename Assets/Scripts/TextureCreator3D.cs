@@ -18,6 +18,8 @@ public class TextureCreator3D : MonoBehaviour
 
     public int resolution;
 
+    public bool genMipMaps = true;
+
     void Start()
     {
         createPixelArray();
@@ -43,7 +45,7 @@ public class TextureCreator3D : MonoBehaviour
     }
 
     private void pixelArrayTo3DTexture(){
-        Texture3D texture = new Texture3D(resolution, resolution, resolution, TextureFormat.RGBA32, false);
+        Texture3D texture = new Texture3D(resolution, resolution, resolution, TextureFormat.RGBA32, genMipMaps);
         for(int x = 0; x < resolution; x++){
             for(int y = 0; y < resolution; y++){
                 for(int z = 0; z < resolution; z++){

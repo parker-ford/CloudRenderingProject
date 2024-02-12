@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Cloud3DNoiseTexture:
-        m_Texture: {fileID: 11700000, guid: a0700d19b57e40340ad00e288f935cc7, type: 2}
+        m_Texture: {fileID: 11700000, guid: 31e142bae316c6641b9bb8ec9ef9b5c3, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:

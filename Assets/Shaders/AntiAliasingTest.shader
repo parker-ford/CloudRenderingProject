@@ -58,7 +58,7 @@ Shader "Parker/AntiAliasingTest"
 
 
 
-                // float2 imageSample = i.uv + _Time.y * 1.1;
+                //float2 imageSample = i.uv + _Time.y * 1.1;
                 float2 imageSample = i.uv;
 
                 if(_NoiseMode == 0){

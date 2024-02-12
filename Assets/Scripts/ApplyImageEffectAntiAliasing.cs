@@ -50,7 +50,6 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
 
 
         if(material != null && anitAliasingMaterial != null && blurMaterial != null){
-            //Graphics.Blit(source, destination, material);
 
             //Before frame threshold
             if(frame < numSamplesFinal){
