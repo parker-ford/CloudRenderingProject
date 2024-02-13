@@ -55,7 +55,8 @@ Shader "Parker/AntiAliasingTest"
                 float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
                 blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
                 blueNoiseSample.g = fract(blueNoiseSample.g + (float(_Frame % _NumSamples) / float(_NumSamples)));
-
+                //TODO: Add random white noise
+                
 
 
                 //float2 imageSample = i.uv + _Time.y * 1.1;

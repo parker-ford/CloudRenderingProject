@@ -148,9 +148,12 @@ Shader "Parker/BlueNoiseTest"
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 pixel = i.uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
+                float2 offsetSample = tex2D(_BlueNoise, float2(_Frame * 2 % _NumSamples, (_Frame * 2 + 1) % _NumSamples) / 256.0);
                 float4 blueNoiseSample = tex2D(_BlueNoise, pixel);
-                blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
-                blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                // blueNoiseSample.r = fract(blueNoiseSample.r + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                // blueNoiseSample.g = fract(blueNoiseSample.g + float(_Frame % _NumSamples) * GOLDEN_RATIO);
+                blueNoiseSample.r = blueNoiseSample.r + (1.0 / _ScreenParams.x * offsetSample.x);
+                blueNoiseSample.g = blueNoiseSample.g + (1.0 / _ScreenParams.y * offsetSample.y);
                 blueNoiseSample.b = fract(blueNoiseSample.b + float(_Frame % _NumSamples) * GOLDEN_RATIO);
 
 
