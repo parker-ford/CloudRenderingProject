@@ -256,7 +256,7 @@ Shader "Parker/DimensionalProfileLit"
                             float clampedExtinction = max(extinction, 0.0001);
 
                             // float transmittance = exp(-extinction * distPerStep * _Absorption);
-                            float transmittance = exp(-extinction * (1.0 / _MarchSteps) * _Absorption);
+                            float transmittance = exp(-extinction * (1.0/_MarchSteps) * _Absorption);
                             totalTransmittance += transmittance;
 
                             //TODO: find mip level
@@ -271,7 +271,7 @@ Shader "Parker/DimensionalProfileLit"
                         currRayDist = distPerStep * (float(step) + blueNoiseSample.b);
                         updateNoiseSample(blueNoiseSample.b);
                     }
-
+                    intScatterTrans.a = 1 - intScatterTrans.a;
                     return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                     //return lerp(mainCol, intScatterTrans, intScatterTrans.a);
                    //return lerp(mainCol, float4(totalTransmittance * _Absorption,0,0,1), intScatterTrans.a);

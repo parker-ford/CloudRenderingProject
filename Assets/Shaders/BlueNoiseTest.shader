@@ -217,7 +217,7 @@ Shader "Parker/BlueNoiseTest"
                             // float extinction = tex3D(_Noise3D, samplePos).a;
                             float extinction = sampleCloudDensity(float4(samplePos,1), 0);
                             float clampedExtinction = max(extinction, 0.0001);
-                            float transmittance = exp(-extinction * distPerStep * _Absorption);
+                            float transmittance = exp(-extinction * (distPerStep) * _Absorption);
                             float luminance = calculateLuminance(pos, blueNoiseSample.b) * extinction;
 
                             //Debug
@@ -237,8 +237,8 @@ Shader "Parker/BlueNoiseTest"
                     intScatterTrans.a = 1 - intScatterTrans.a;
                 }
 
-                return lerp(mainCol, intScatterTrans, intScatterTrans.a);
-                //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                //return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
                 // return lerp(mainCol, cubeCol, density);
 
             }

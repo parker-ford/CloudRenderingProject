@@ -427,7 +427,7 @@ MonoBehaviour:
   lightIntensity: 1
   lightAbsorption: 1
   noiseTiling: 2048
-  absoroption: -0.3
+  absoroption: 0.08
 --- !u!1 &1929042653
 GameObject:
   m_ObjectHideFlags: 0
