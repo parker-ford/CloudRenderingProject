@@ -22,6 +22,7 @@ Shader "Parker/BlueNoiseTest"
             #include "ray.cginc"
 
             #define GOLDEN_RATIO 1.61803398875
+            #define CLOUD_COVERAGE 0.85
 
             struct appdata
             {
@@ -142,6 +143,34 @@ Shader "Parker/BlueNoiseTest"
                 //return totalDensity;
             }
 
+            // float cloudBase(float4 pos, float y){
+            //     float4 lowFreqNoise = tex3Dlod(_Noise3D, pos);
+            //     float n = 0.5 * 0.5 * lowFreqNoise.b + pow(1. - 0.5, 12.);
+            //     float baseCloud = remap_f(lowFreqNoise.r - n, lowFreqNoise.g - 1., 1., 0., 1.);
+
+            //     // float lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
+            //     // float baseCloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+
+            //     //baseCloud = saturate(baseCloud);
+            //     return baseCloud;
+            // }
+
+            // float sampleCloudDensity(float4 pos, float y){
+            //     float d = cloudBase(pos, y);
+            //     d = remap_f(d, CLOUD_COVERAGE, 1., 0, 1) * (CLOUD_COVERAGE);
+            //     //d *= cloudGradient(y);
+            //     return d;
+            // }
+
+
+            float sampleCloudDensity(float4 pos, float y){
+                float4 lowFreqNoise = tex3Dlod(_Noise3D, pos);
+                float3 lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
+                float base_cloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+
+                return base_cloud;
+            }
+
 
 
 
@@ -185,7 +214,8 @@ Shader "Parker/BlueNoiseTest"
                             pos = pos - _CubePosition;                  
                             float3 samplePos = remap_f3(pos, -_NoiseTiling, _NoiseTiling, 0, 1);
                             
-                            float extinction = tex3D(_Noise3D, samplePos).r;
+                            // float extinction = tex3D(_Noise3D, samplePos).a;
+                            float extinction = sampleCloudDensity(float4(samplePos,1), 0);
                             float clampedExtinction = max(extinction, 0.0001);
                             float transmittance = exp(-extinction * distPerStep * _Absorption);
                             float luminance = calculateLuminance(pos, blueNoiseSample.b) * extinction;
