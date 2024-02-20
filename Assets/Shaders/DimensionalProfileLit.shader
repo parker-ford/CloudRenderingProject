@@ -264,8 +264,8 @@ Shader "Parker/DimensionalProfileLit"
                         updateNoiseSample(blueNoiseSample.b);
                     }
 
-                    return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
-                    //return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                    //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                    return lerp(mainCol, intScatterTrans, intScatterTrans.a);
                    //return lerp(mainCol, float4(totalTransmittance * _Absorption,0,0,1), intScatterTrans.a);
                 }
 
