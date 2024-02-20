@@ -9,6 +9,7 @@ public class DimensionalProfileLitController : MonoBehaviour
     public float lightIntensity = 1.0f;
     public float lightAbsorption = 1.0f;
     public float noiseTiling = 128.0f;
+    public float weatherTiling = 128.0f;
     public float absoroption = 1.0f;
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class DimensionalProfileLitController : MonoBehaviour
         material.SetFloat("_LightAbsorption", lightAbsorption);
         material.SetFloat("_NoiseTiling", noiseTiling);
         material.SetFloat("_Absorption", absoroption);
+        material.SetFloat("_WeatherTiling", weatherTiling);
         
     }
 }

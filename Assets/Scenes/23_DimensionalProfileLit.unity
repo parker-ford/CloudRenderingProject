@@ -424,10 +424,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
   myDirectionalLight: {fileID: 1929042654}
-  lightIntensity: 1
-  lightAbsorption: 1
+  lightIntensity: 20
+  lightAbsorption: 0.08
   noiseTiling: 2048
-  absoroption: 0.08
+  absoroption: 2
 --- !u!1 &1929042653
 GameObject:
   m_ObjectHideFlags: 0

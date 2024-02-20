@@ -35,6 +35,22 @@ Material:
         m_Texture: {fileID: 11700000, guid: 31e142bae316c6641b9bb8ec9ef9b5c3, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _CloudCoverage:
+        m_Texture: {fileID: 2800000, guid: 58d8f48b14da12a468526ecc4db7fbff, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CloudGradient:
+        m_Texture: {fileID: 2800000, guid: 81db2dd7098f04e4790b963ee782ad7c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CloudTyoe:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CloudType:
+        m_Texture: {fileID: 2800000, guid: 58d8f48b14da12a468526ecc4db7fbff, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

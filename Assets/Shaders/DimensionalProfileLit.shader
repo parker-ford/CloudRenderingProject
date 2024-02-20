@@ -5,6 +5,9 @@ Shader "Parker/DimensionalProfileLit"
         _MainTex ("Texture", 2D) = "white" {}
         _BlueNoise ("Blue Noise", 2D) = "white" {}
         _Cloud3DNoiseTexture ("Cloud3DNoiseTexture", 3D) = "white" {}
+        _CloudCoverage ("Cloud Coverage", 2D) = "white" {}
+        _CloudType ("Cloud Type", 2D) = "white" {}
+        _CloudGradient ("Cloud Gradient", 2D) = "white" {}
     }
     SubShader
     {
@@ -52,8 +55,12 @@ Shader "Parker/DimensionalProfileLit"
             //Shader Parameters
             sampler2D _MainTex;
             sampler3D _Cloud3DNoiseTexture;
+            sampler2D _CloudCoverage;
+            sampler2D _CloudType;
+            sampler2D _CloudGradient;
             float _Absorption;
             float _NoiseTiling;
+            float _WeatherTiling;
             float3 _LightDir;
             float _LightIntensity;
             float _LightAbsorption;
@@ -129,39 +136,67 @@ Shader "Parker/DimensionalProfileLit"
             //     return d;
             // }
 
-            float sampleCloudDensity(float4 pos, float y){
-                float4 lowFreqNoise = tex3Dlod(_Cloud3DNoiseTexture, pos);
+            float getDenistyHeightGradientForPoint(float3 pos){
+                float3 samplePos;
+                samplePos.x = remap_f(pos.x, -_WeatherTiling, _WeatherTiling, 0.0, 1.0);
+                samplePos.y = getHeightFract(pos.y);
+                samplePos.z = remap_f(pos.z, -_WeatherTiling, _WeatherTiling, 0.0, 1.0);
+                float cloudType = tex2D(_CloudType, samplePos.xz).r;
+
+                float densityHeight = tex2D(_CloudGradient, float2(cloudType, samplePos.y) ).r;
+                // samplePos
+                return densityHeight;
+            }
+
+            float sampleCloudDensity(float startDist, float3 pos, float y){
+                
+                float4 samplePos;
+                samplePos.x = remap_f(pos.x, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
+                samplePos.z = remap_f(pos.z, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
+                // samplePos.y = getHeightFract(pos); //This may need to change
+                samplePos.y = samplePos.z = remap_f(pos.z, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
+
+                //mip level
+                samplePos.w = remap_f(startDist, ATMOSPHERE_LOWER_BOUND, MAX_VIEW_DISTANCE, 0, 6);
+
+
+                float4 lowFreqNoise = tex3Dlod(_Cloud3DNoiseTexture, samplePos);
                 float3 lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
                 float base_cloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+
+                float densityHeight = getDenistyHeightGradientForPoint(pos);
+
+                base_cloud *= densityHeight;
 
                 return base_cloud;
             }
 
             float3 calculateLuminance(float4 startPos, float blueNoiseSample){
-                float4 intScatterTrans = float4(0,0,0,1);
-                float3 rayDir = normalize(-_LightDir);
-                float distPerStep = 11;
-                for(int step = 0; step < 6; step++){
-                    float3 pos = startPos + (rayDir) * (float(step) * (distPerStep));
-                    float4 samplePos;
-                    samplePos.x = remap_f(pos.x, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
-                    samplePos.z = remap_f(pos.z, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
-                    samplePos.y = getHeightFract(pos);
-                    //TODO: determine mip level
-                    samplePos.w = 0;
+                return float3(1,1,1);
+                // float4 intScatterTrans = float4(0,0,0,1);
+                // float3 rayDir = normalize(-_LightDir);
+                // float distPerStep = 11;
+                // for(int step = 0; step < 6; step++){
+                //     float3 pos = startPos + (rayDir) * (float(step) * (distPerStep));
+                //     float4 samplePos;
+                //     samplePos.x = remap_f(pos.x, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
+                //     samplePos.z = remap_f(pos.z, -CLOUD_FREQUENCY, CLOUD_FREQUENCY, 0.0, 1.0);
+                //     samplePos.y = getHeightFract(pos);
+                //     //TODO: determine mip level
+                //     samplePos.w = 0;
 
-                    float density = sampleCloudDensity(samplePos, pos.y);
-                    float extinction = density;
-                    float clampedExtinction = max(extinction, 0.0001);
-                    float transmittance = exp(-extinction * distPerStep * _LightAbsorption);
-                    float luminance = 1;
-                    float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
-                    intScatterTrans.rgb += intScatterTrans.a * integScatter;
-                    intScatterTrans.a *= transmittance;
+                //     float density = sampleCloudDensity(samplePos, pos.y);
+                //     float extinction = density;
+                //     float clampedExtinction = max(extinction, 0.0001);
+                //     float transmittance = exp(-extinction * distPerStep * _LightAbsorption);
+                //     float luminance = 1;
+                //     float3 integScatter = (luminance - luminance * transmittance) / clampedExtinction;
+                //     intScatterTrans.rgb += intScatterTrans.a * integScatter;
+                //     intScatterTrans.a *= transmittance;
 
-                }
+                // }
 
-                return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
+                // return _LightIntensity * float3(1,1,1) * intScatterTrans.a;
             }
 
             
@@ -241,15 +276,13 @@ Shader "Parker/DimensionalProfileLit"
                     for(int step = 0; step < _MarchSteps; i++){
                         float3 pos = startPos + rayDir * currRayDist;
 
-                        float4 samplePos;
-                        samplePos.x = remap_f(pos.x, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
-                        samplePos.z = remap_f(pos.z, -_NoiseTiling, _NoiseTiling, 0.0, 1.0);
-                        samplePos.y = getHeightFract(pos);
-                        
-                        //mip level
-                        samplePos.w = remap_f(startDist, ATMOSPHERE_LOWER_BOUND, MAX_VIEW_DISTANCE, 0, 6);
+                        // float3 samplePos;
+                        // samplePos.x = remap_f(pos.x, -_WeatherTiling, _WeatherTiling, 0.0, 1.0);
+                        // samplePos.y = getHeightFract(pos.y);
+                        // samplePos.z = remap_f(pos.z, -_WeatherTiling, _WeatherTiling, 0.0, 1.0);
+                        // return tex2D(_CloudType, samplePos.xz);
 
-                        float density = sampleCloudDensity(samplePos, pos.y);
+                        float density = sampleCloudDensity(startDist, pos, pos.y);
                         
                         //if(density > 0.0001){
                             float extinction = density;
