@@ -23,7 +23,7 @@ Shader "Parker/DimensionalProfileLit"
             #define ATMOSPHERE_LOWER_BOUND 1500.0
             #define ATMOSPHERE_UPPER_BOUND 5000.0
             #define CLOUD_FREQUENCY 2048.0
-            #define CLOUD_COVERAGE 0.85
+            #define CLOUD_COVERAGE 0.55
             #define GOLDEN_RATIO 1.61803398875
             #define EARTH_RADIUS 6378100.0
             #define MAX_VIEW_DISTANCE 50000.0
@@ -110,23 +110,31 @@ Shader "Parker/DimensionalProfileLit"
             //     return cloud;
             // }
 
-            float cloudBase(float4 pos, float y){
-                float4 lowFreqNoise = tex3Dlod(_Cloud3DNoiseTexture, pos);
-                float n = 0.5 * 0.5 * lowFreqNoise.b + pow(1. - 0.5, 12.);
-                float baseCloud = remap_f(lowFreqNoise.r - n, lowFreqNoise.g - 1., 1., 0., 1.);
+            // float cloudBase(float4 pos, float y){
+            //     float4 lowFreqNoise = tex3Dlod(_Cloud3DNoiseTexture, pos);
+            //     float n = 0.5 * 0.5 * lowFreqNoise.b + pow(1. - 0.5, 12.);
+            //     float baseCloud = remap_f(lowFreqNoise.r - n, lowFreqNoise.g - 1., 1., 0., 1.);
 
-                // float lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
-                // float baseCloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+            //     // float lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
+            //     // float baseCloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
 
-                //baseCloud = saturate(baseCloud);
-                return baseCloud;
-            }
+            //     //baseCloud = saturate(baseCloud);
+            //     return baseCloud;
+            // }
+
+            // float sampleCloudDensity(float4 pos, float y){
+            //     float d = cloudBase(pos, y);
+            //     d = remap_f(d, CLOUD_COVERAGE, 1., 0, 1) * (CLOUD_COVERAGE);
+            //     //d *= cloudGradient(y);
+            //     return d;
+            // }
 
             float sampleCloudDensity(float4 pos, float y){
-                float d = cloudBase(pos, y);
-                d = remap_f(d, CLOUD_COVERAGE, 1., 0, 1) * (CLOUD_COVERAGE);
-                //d *= cloudGradient(y);
-                return d;
+                float4 lowFreqNoise = tex3Dlod(_Cloud3DNoiseTexture, pos);
+                float3 lowFreqFBM = (lowFreqNoise.g * 0.625) + (lowFreqNoise.b * 0.25) + (lowFreqNoise.a * 0.125);
+                float base_cloud = remap_f(lowFreqNoise.r, -(1.0 - lowFreqFBM), 1.0, 0.0, 1.0);
+
+                return base_cloud;
             }
 
             float3 calculateLuminance(float4 startPos, float blueNoiseSample){
@@ -264,8 +272,8 @@ Shader "Parker/DimensionalProfileLit"
                         updateNoiseSample(blueNoiseSample.b);
                     }
 
-                    //return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
-                    return lerp(mainCol, intScatterTrans, intScatterTrans.a);
+                    return lerp(mainCol, float4(1,1,1,1), intScatterTrans.a);
+                    //return lerp(mainCol, intScatterTrans, intScatterTrans.a);
                    //return lerp(mainCol, float4(totalTransmittance * _Absorption,0,0,1), intScatterTrans.a);
                 }
 
