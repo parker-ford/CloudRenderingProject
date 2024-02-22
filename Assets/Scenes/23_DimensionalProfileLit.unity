@@ -261,7 +261,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
   anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
   blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
-  numSamples: 1
+  numSamples: 7
   noiseAnimationMode: 0
   useBlur: 0
   blurMode: 0
@@ -424,9 +424,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: b317f5e9c25c328458b6eb1371fd1456, type: 2}
   myDirectionalLight: {fileID: 1929042654}
-  lightIntensity: 20
+  lightIntensity: 10
   lightAbsorption: 0.08
   noiseTiling: 2048
+  weatherTiling: 2048
   absoroption: 2
 --- !u!1 &1929042653
 GameObject:
