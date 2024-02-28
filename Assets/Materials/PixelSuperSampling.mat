@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GaussianBlur
-  m_Shader: {fileID: 4800000, guid: 7c890e43698a70d438d6bc0b41eba5f9, type: 3}
+  m_Name: PixelSuperSampling
+  m_Shader: {fileID: 4800000, guid: 7e57a915e6238f4469f4ebdb1a2e81c1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
