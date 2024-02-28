@@ -13,7 +13,7 @@ public class ApplyRaycastParameters : MonoBehaviour
     private int raycastOptions = 0;
     private int randomBit = 1;
     private int intervalBit = 2;
-    [Range(0,20)]
+    [Range(0,200)]
     public float rayOffsetWeight = 1.0f;
 
     void Start()

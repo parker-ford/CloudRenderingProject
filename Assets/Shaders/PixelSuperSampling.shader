@@ -3,6 +3,7 @@ Shader "Parker/PixelSuperSampling"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _BlueNoiseTex ("Blue Noise Texture", 2D) = "white" {}
     }
     SubShader
     {
@@ -39,6 +40,7 @@ Shader "Parker/PixelSuperSampling"
             }
 
             sampler2D _MainTex;
+            sampler2D _BlueNoiseTex;
             float _RayOffsetWeight;
 
             float3 getCameraOriginInWorldLocal(){
@@ -51,12 +53,17 @@ Shader "Parker/PixelSuperSampling"
 
             float3 getPixelRayInWorldLocal(float2 uv){
 
+                
+                float2 pixel = uv * float2(_ScreenParams.x / 256.0, _ScreenParams.y / 256.0) + 0.5;
+                float4 blueNoiseSample = tex2D(_BlueNoiseTex, pixel);
+
                 //Move uv to center
                 uv += float2((1.0 / _ScreenParams.x) * 0.5 , (1.0 / _ScreenParams.y) * 0.5);
 
                 float2 offset;
                 // offset = float2((1.0 / _ScreenParams.x) * (random() - 0.5) , (1.0 / _ScreenParams.x) * (random() - 0.5));
-                offset = float2((1.0 / _ScreenParams.x), -(1.0 / _ScreenParams.y));
+                //offset = float2((1.0 / _ScreenParams.x) * uv.y * uv.y, (1.0 / _ScreenParams.y) * uv.y * uv.y);
+                offset = float2((1.0 / _ScreenParams.x) * (blueNoiseSample.x - 0.5), (1.0 / _ScreenParams.y) * (blueNoiseSample.y - 0.5));
                 offset *= _RayOffsetWeight;
                 uv += offset;
 
@@ -84,6 +91,8 @@ Shader "Parker/PixelSuperSampling"
 
             fixed4 frag (v2f i) : SV_Target
             {
+
+
                 float4 mainColor = tex2D(_MainTex, i.uv);
                 float3 origin = getCameraOriginInWorldLocal();
                 float3 ray = getPixelRayInWorldLocal(i.uv);
