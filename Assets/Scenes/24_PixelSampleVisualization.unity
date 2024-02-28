@@ -1932,11 +1932,12 @@ MonoBehaviour:
   unactiveSampleMat: {fileID: 2100000, guid: 91e1fc27139669e4f8b64d3b7f44d953, type: 2}
   pixelSamplePos: {fileID: 2218191654997893108, guid: c55615cad2fd3ea45b19b40eb2c066d2, type: 3}
   pixelSamplePath: {fileID: 4520239862483126508, guid: 0461935d817a00b48a427248fc4ebd3e, type: 3}
-  numSamples: 16
-  offsetType: 5
+  numSamples: 25
   blueNoiseTexture: {fileID: 2800000, guid: 631c668f86ac8b84ab93da7ad2518c38, type: 3}
   recalculate: 0
   rookPositions: 
+  showOffsetType: 5
+  showVisuals: 0
 --- !u!4 &1605064876
 Transform:
   m_ObjectHideFlags: 0

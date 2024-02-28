@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 public class ApplyImageEffectAntiAliasing : MonoBehaviour
 {
@@ -34,9 +35,9 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         numSamplesFinal = numSamples;
         buffers = new RenderTexture[numSamplesFinal];
         for(int i = 0; i < numSamplesFinal; i++){
-            buffers[i] = new RenderTexture(Screen.width, Screen.height, 0);
+            buffers[i] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
         }
-        antiAliasedBuffer = new RenderTexture(Screen.width, Screen.height, 0);
+        antiAliasedBuffer = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination){

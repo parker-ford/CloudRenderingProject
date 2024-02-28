@@ -48,7 +48,7 @@ Shader "Parker/TemporalAntiAliasing"
             {
                 //Before frame threshold
                 if(_Frame < _NumSamples){
-                    return tex2D(_MainTex, i.uv) + (tex2D(_FrameTex, i.uv) / _NumSamples);
+                    return tex2D(_MainTex, i.uv) + (tex2D(_FrameTex, i.uv) / (float)_NumSamples);
                 }
                 else{
                     //Adding
