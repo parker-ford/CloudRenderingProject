@@ -8,9 +8,11 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
     public Material material;
     public Material anitAliasingMaterial;
     public Material blurMaterial;
-    [Range(1, 9)]
+    [Range(1, 16)]
     public int numSamples = 1;
-    private int numSamplesFinal;
+    private int maxSamples = 16;
+    private int lastSamples = 0;
+    // private int numSamplesFinal;
     int frame = 0;
     RenderTexture[] buffers;
     RenderTexture antiAliasedBuffer;
@@ -33,9 +35,9 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         Debug.Assert(anitAliasingMaterial != null);
         Debug.Assert(blurMaterial != null);
         
-        numSamplesFinal = numSamples;
-        buffers = new RenderTexture[numSamplesFinal];
-        for(int i = 0; i < numSamplesFinal; i++){
+        //numSamplesFinal = numSamples;
+        buffers = new RenderTexture[maxSamples];
+        for(int i = 0; i < maxSamples; i++){
             buffers[i] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
         }
         antiAliasedBuffer = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
@@ -43,10 +45,20 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
 
     void OnRenderImage(RenderTexture source, RenderTexture destination){
 
+        if(lastSamples != numSamples){
+            for(int i = 0; i < maxSamples; i++){
+                buffers[i].Release();
+                buffers[i] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
+            }
+            antiAliasedBuffer.Release();
+            antiAliasedBuffer = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat);
+            frame = 0;
+        }
+
         anitAliasingMaterial.SetInt("_Frame", frame);
-        anitAliasingMaterial.SetInt("_NumSamples", numSamplesFinal);
+        anitAliasingMaterial.SetInt("_NumSamples", numSamples);
         material.SetInt("_Frame", frame);
-        material.SetInt("_NumSamples", numSamplesFinal);
+        material.SetInt("_NumSamples", numSamples);
         material.SetInt("_NoiseMode", (int)noiseAnimationMode);
         blurMaterial.SetInt("_Mode", (int)blurMode);
 
@@ -54,7 +66,7 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
         if(material != null && anitAliasingMaterial != null && blurMaterial != null){
 
             //Before frame threshold
-            if(frame < numSamplesFinal){
+            if(frame < numSamples){
                 Graphics.Blit(source, buffers[frame], material);
                 anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame]);
                 RenderTexture temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
@@ -66,16 +78,16 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
 
                 //Subract oldest frame
                 anitAliasingMaterial.SetInt("_Mode",0);
-                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamplesFinal]);
+                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamples]);
                 RenderTexture temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
                 Graphics.Blit(antiAliasedBuffer, temp,  anitAliasingMaterial);
                 Graphics.Blit(temp,antiAliasedBuffer);
                 RenderTexture.ReleaseTemporary(temp);
 
                 //Add new frame
-                Graphics.Blit(source, buffers[frame % numSamplesFinal], material);
+                Graphics.Blit(source, buffers[frame % numSamples], material);
                 anitAliasingMaterial.SetInt("_Mode", 1);
-                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamplesFinal]);
+                anitAliasingMaterial.SetTexture("_FrameTex", buffers[frame % numSamples]);
                 temp = RenderTexture.GetTemporary(antiAliasedBuffer.width, antiAliasedBuffer.height, antiAliasedBuffer.depth, antiAliasedBuffer.format);
                 Graphics.Blit(antiAliasedBuffer, temp, anitAliasingMaterial);
                 Graphics.Blit(temp,antiAliasedBuffer);
@@ -92,13 +104,13 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
 
             //Graphics.Blit(source, buffers[frame % numSamplesFinal], material);
 
-
         }
         else{
             Graphics.Blit(source,destination);
             Debug.LogError("Image effect material is null");
         }
 
+        lastSamples = numSamples;
         frame++;
     }
 
