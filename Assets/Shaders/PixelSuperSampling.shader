@@ -18,6 +18,7 @@ Shader "Parker/PixelSuperSampling"
 
             #include "UnityCG.cginc"
             #include "./ray.cginc"
+            #include "./pixelOffsets.cginc"
 
             struct appdata
             {
@@ -42,6 +43,8 @@ Shader "Parker/PixelSuperSampling"
             sampler2D _MainTex;
             sampler2D _BlueNoiseTex;
             float _RayOffsetWeight;
+            int _Frame;
+            int _NumSamples;
 
             float3 getCameraOriginInWorldLocal(){
                 //Transform Camera Position to world space;
@@ -63,7 +66,8 @@ Shader "Parker/PixelSuperSampling"
                 float2 offset;
                 // offset = float2((1.0 / _ScreenParams.x) * (random() - 0.5) , (1.0 / _ScreenParams.x) * (random() - 0.5));
                 //offset = float2((1.0 / _ScreenParams.x) * uv.y * uv.y, (1.0 / _ScreenParams.y) * uv.y * uv.y);
-                offset = float2((1.0 / _ScreenParams.x) * (blueNoiseSample.x - 0.5), (1.0 / _ScreenParams.y) * (blueNoiseSample.y - 0.5));
+                //offset = float2((1.0 / _ScreenParams.x) * (blueNoiseSample.x - 0.5), (1.0 / _ScreenParams.y) * (blueNoiseSample.y - 0.5));
+                offset = (uniformPixelOffsets[_NumSamples - 1][_Frame % _NumSamples] - 0.5) * float2(1.0 / _ScreenParams.x, 1.0 / _ScreenParams.y);
                 offset *= _RayOffsetWeight;
                 uv += offset;
 

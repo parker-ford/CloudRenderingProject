@@ -198,3 +198,78 @@ Best Samples:
 
 
 --------------------
+--------------------
+PIXEL SAMPLE ANALYSIS FOR 1 SAMPLES
+Baseline Samples: 
+{{0.5, 0.5}}
+
+
+WHITE NOISE
+Chi Square Average: 0
+Average Nearest Neighbor: 0
+Best Chi Square: 0
+Best Average Nearest Neighbor: 0
+Best Samples: 
+{{0.8117647, 0.1568628}}
+
+
+N ROOKS
+Chi Square Average: 0
+Average Nearest Neighbor: 0
+Best Chi Square: 0
+Best Average Nearest Neighbor: 0
+Best Samples: 
+{{0.07843138, 0.6588235}}
+
+
+--------------------
+--------------------
+PIXEL SAMPLE ANALYSIS FOR 2 SAMPLES
+Baseline Samples: 
+{{0.5, 0.5}}
+
+
+WHITE NOISE
+Chi Square Average: 1
+Average Nearest Neighbor: 0.4802262
+Best Chi Square: 1
+Best Average Nearest Neighbor: 0.9160547
+Best Samples: 
+{{0.3490196, 0.8666667}, {0.352952, 0.9505198}}
+
+
+N ROOKS
+Chi Square Average: 1
+Average Nearest Neighbor: 0.5
+Best Chi Square: 1
+Best Average Nearest Neighbor: 0.4999999
+Best Samples: 
+{{0.7058824, 0.07450981}, {0.2058823, 0.07450981}}
+
+
+--------------------
+--------------------
+PIXEL SAMPLE ANALYSIS FOR 3 SAMPLES
+Baseline Samples: 
+{{0.5, 0.5}}
+
+
+WHITE NOISE
+Chi Square Average: 4
+Average Nearest Neighbor: 0.6099509
+Best Chi Square: 4
+Best Average Nearest Neighbor: 0.6085641
+Best Samples: 
+{{0.1568628, 0.6352941}, {0.4976591, 0.4858072}, {0.8252733, 0.7643604}}
+
+
+N ROOKS
+Chi Square Average: 4
+Average Nearest Neighbor: 0.5629269
+Best Chi Square: 4
+Best Average Nearest Neighbor: 0.620643
+Best Samples: 
+{{0.5176471, 0.8313726}, {0.1843138, 0.1647059}, {0.5176468, 0.4980392}}
+
+
+--------------------

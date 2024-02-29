@@ -355,7 +355,7 @@ Transform:
   m_GameObject: {fileID: 1933101172}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0.78, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -376,7 +376,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 04a9b3508c69fcc4e8c24c35cd05a778, type: 2}
   anitAliasingMaterial: {fileID: 2100000, guid: 60e5eb3c46e26394495c21a3c8241b73, type: 2}
   blurMaterial: {fileID: 2100000, guid: 0446ea576fa390c4b9fec9eb22b20b15, type: 2}
-  numSamples: 1
+  numSamples: 4
   noiseAnimationMode: 0
   useBlur: 0
   blurMode: 0
