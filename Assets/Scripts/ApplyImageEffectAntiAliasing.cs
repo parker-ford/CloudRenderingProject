@@ -8,6 +8,7 @@ public class ApplyImageEffectAntiAliasing : MonoBehaviour
     public Material material;
     public Material anitAliasingMaterial;
     public Material blurMaterial;
+    [Range(1, 9)]
     public int numSamples = 1;
     private int numSamplesFinal;
     int frame = 0;

@@ -157,7 +157,7 @@ MonoBehaviour:
   useIncreasingMarchIntervals: 0
   marchSteps: 1
   raysPerPixel: 1
-  rayOffsetWeight: 0
+  rayOffsetWeight: 1
 --- !u!4 &1143199625
 Transform:
   m_ObjectHideFlags: 0
